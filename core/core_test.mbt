@@ -34,3 +34,36 @@ test "event ordering" {
   // e2 has higher priority (0 < 1) at same time (100ms)
   inspect(e2.compare(e1) < 0, content="true")
 }
+
+///|
+test "priority queue min heap" {
+  let pq : PriorityQueue[Int] = PriorityQueue::new()
+  pq.push(30)
+  pq.push(10)
+  pq.push(20)
+  inspect(pq.length(), content="3")
+  inspect(pq.pop(), content="Some(10)")
+  inspect(pq.pop(), content="Some(20)")
+  inspect(pq.pop(), content="Some(30)")
+  inspect(pq.pop(), content="None")
+}
+
+///|
+test "simulator scheduling and execution" {
+  let sim = Simulator::new()
+  let mut log = ""
+  let _ = sim.schedule(Duration::from_millis(100L), () => {
+    log = log + "e1;"
+  })
+  let _ = sim.schedule(Duration::from_millis(50L), () => {
+    log = log + "e2;"
+  })
+  let _ = sim.schedule(Duration::from_millis(100L), priority=-1, () => {
+    log = log + "e3_prio;"
+  })
+  sim.run()
+  // e2 executes at 50ms, then e3_prio at 100ms (priority -1 < 0), then e1 at 100ms
+  inspect(log, content="e2;e3_prio;e1;")
+  inspect(sim.now().to_string(), content="100ms")
+  inspect(sim.event_count(), content="3")
+}
