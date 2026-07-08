@@ -1,0 +1,10 @@
+import {
+  "bins-c-language/moon_event_sim/core",
+  "bins-c-language/moon_event_sim/net",
+  "bins-c-language/moon_event_sim/examples/queue",
+  "bins-c-language/moon_event_sim/examples/raft",
+}
+
+options(
+  "is-main": true,
+)
