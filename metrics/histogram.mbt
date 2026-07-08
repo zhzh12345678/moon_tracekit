@@ -85,3 +85,10 @@ pub fn Histogram::percentile(self : Histogram, p : Double) -> Double {
   }
   copy[idx]
 }
+
+///|
+/// 获取 P95 尾部延迟分位值
+pub fn Histogram::p95(self : Histogram) -> Double {
+  self.percentile(0.95)
+}
+

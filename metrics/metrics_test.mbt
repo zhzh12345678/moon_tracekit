@@ -29,4 +29,7 @@ test "histogram percentiles and distribution" {
   // p99 is around 99 or 100
   let p99 = h.percentile(0.99)
   inspect(p99 >= 99.0 && p99 <= 100.0, content="true")
+  let p95 = h.p95()
+  inspect(p95 >= 95.0 && p95 <= 96.0, content="true")
 }
+
