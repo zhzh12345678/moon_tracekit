@@ -1,0 +1,4 @@
+import {
+  "bins-c-language/moon_event_sim/core",
+  "bins-c-language/moon_event_sim/net",
+}
