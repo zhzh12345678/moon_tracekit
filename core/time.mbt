@@ -47,6 +47,18 @@ pub fn Time::to_nanos(self : Time) -> Int64 {
 }
 
 ///|
+/// 获取毫秒数值
+pub fn Time::to_millis(self : Time) -> Int64 {
+  self.nanos / 1000_000L
+}
+
+///|
+/// 获取秒数值
+pub fn Time::to_secs(self : Time) -> Int64 {
+  self.nanos / 1000_000_000L
+}
+
+///|
 /// 转换为毫秒浮点数（方便监控与日志显示）
 pub fn Time::to_millis_double(self : Time) -> Double {
   self.nanos.to_double() / 1000_000.0
@@ -98,6 +110,18 @@ pub fn Duration::from_secs_double(secs : Double) -> Duration {
 /// 获取时长的纳秒数值
 pub fn Duration::to_nanos(self : Duration) -> Int64 {
   self.nanos
+}
+
+///|
+/// 获取时长的毫秒数值
+pub fn Duration::to_millis(self : Duration) -> Int64 {
+  self.nanos / 1000_000L
+}
+
+///|
+/// 获取时长的秒数值
+pub fn Duration::to_secs(self : Duration) -> Int64 {
+  self.nanos / 1000_000_000L
 }
 
 ///|

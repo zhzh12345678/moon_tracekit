@@ -29,9 +29,7 @@ test "event ordering" {
   let e1 = Event::new(1, Time::from_millis(100L), priority=1, () => ())
   let e2 = Event::new(2, Time::from_millis(100L), priority=0, () => ())
   let e3 = Event::new(3, Time::from_millis(50L), priority=0, () => ())
-  // e3 is earliest (50ms)
   inspect(e3.compare(e1) < 0, content="true")
-  // e2 has higher priority (0 < 1) at same time (100ms)
   inspect(e2.compare(e1) < 0, content="true")
 }
 
@@ -42,10 +40,10 @@ test "priority queue min heap" {
   pq.push(10)
   pq.push(20)
   inspect(pq.length(), content="3")
-  inspect(pq.pop(), content="Some(10)")
-  inspect(pq.pop(), content="Some(20)")
-  inspect(pq.pop(), content="Some(30)")
-  inspect(pq.pop(), content="None")
+  inspect(pq.pop() == Some(10), content="true")
+  inspect(pq.pop() == Some(20), content="true")
+  inspect(pq.pop() == Some(30), content="true")
+  inspect(pq.pop() == None, content="true")
 }
 
 ///|
@@ -62,7 +60,6 @@ test "simulator scheduling and execution" {
     log = log + "e3_prio;"
   })
   sim.run()
-  // e2 executes at 50ms, then e3_prio at 100ms (priority -1 < 0), then e1 at 100ms
   inspect(log, content="e2;e3_prio;e1;")
   inspect(sim.now().to_string(), content="100ms")
   inspect(sim.event_count(), content="3")
