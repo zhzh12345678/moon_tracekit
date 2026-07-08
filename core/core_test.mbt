@@ -60,3 +60,23 @@ test "simulator scheduling and execution" {
   inspect(sim.now().to_string(), content="100ms")
   inspect(sim.event_count(), content="3")
 }
+
+///|
+test "bench: virtual time priority queue throughput" {
+  let pq : PriorityQueue[Int] = PriorityQueue::new()
+  for i = 0; i < 1000; i = i + 1 {
+    pq.push(i)
+  }
+  inspect(pq.length(), content="1000")
+  let mut min_val = 0
+  for i = 0; i < 1000; i = i + 1 {
+    match pq.pop() {
+      Some(v) => if i == 0 { min_val = v }
+      None => ()
+    }
+  }
+  inspect(min_val, content="0")
+
+  inspect(pq.length(), content="0")
+}
+
