@@ -15,7 +15,7 @@ pub fn Barrier::new(
   id : Int,
   name : String,
   parties : Int,
-  mgr : @process.ProcessManager
+  mgr : @process.ProcessManager,
 ) -> Barrier {
   { id, name, parties, arrived: 0, mgr }
 }

@@ -10,16 +10,15 @@ pub(all) struct MetricsRegistry {
 ///|
 /// 创建新的注册表
 pub fn MetricsRegistry::new() -> MetricsRegistry {
-  {
-    counters: Map([]),
-    gauges: Map([]),
-    histograms: Map([]),
-  }
+  { counters: Map([]), gauges: Map([]), histograms: Map([]) }
 }
 
 ///|
 /// 注册或获取计数器
-pub fn MetricsRegistry::counter(self : MetricsRegistry, name : String) -> Counter {
+pub fn MetricsRegistry::counter(
+  self : MetricsRegistry,
+  name : String,
+) -> Counter {
   match self.counters.get(name) {
     Some(c) => c
     None => {
@@ -45,7 +44,10 @@ pub fn MetricsRegistry::gauge(self : MetricsRegistry, name : String) -> Gauge {
 
 ///|
 /// 注册或获取直方图
-pub fn MetricsRegistry::histogram(self : MetricsRegistry, name : String) -> Histogram {
+pub fn MetricsRegistry::histogram(
+  self : MetricsRegistry,
+  name : String,
+) -> Histogram {
   match self.histograms.get(name) {
     Some(h) => h
     None => {

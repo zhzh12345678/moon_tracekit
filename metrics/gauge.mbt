@@ -8,7 +8,7 @@ pub(all) struct Gauge {
 
 ///|
 /// 创建新的仪表
-pub fn Gauge::new(name : String, init_val~ : Double = 0.0) -> Gauge {
+pub fn Gauge::new(name : String, init_val? : Double = 0.0) -> Gauge {
   { name, value: init_val }
 }
 

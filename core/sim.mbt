@@ -9,11 +9,7 @@ pub(all) struct SimOptions {
 ///|
 /// 默认配置：仿真最大时间 100,000 秒，最大事件数 10 亿次，默认种子 42
 pub fn SimOptions::default() -> SimOptions {
-  {
-    max_time: Time::from_secs(100_000L),
-    max_events: 1000_000_000L,
-    seed: 42UL,
-  }
+  { max_time: Time::from_secs(100_000L), max_events: 1000_000_000L, seed: 42UL }
 }
 
 ///|
@@ -31,7 +27,9 @@ pub(all) struct Simulator {
 
 ///|
 /// 创建一个新的离散事件仿真器
-pub fn Simulator::new(options~ : SimOptions = SimOptions::default()) -> Simulator {
+pub fn Simulator::new(
+  options? : SimOptions = SimOptions::default(),
+) -> Simulator {
   {
     current_time: Time::zero(),
     next_event_id: 1,
@@ -73,8 +71,8 @@ pub fn Simulator::is_running(self : Simulator) -> Bool {
 pub fn Simulator::schedule(
   self : Simulator,
   delay : Duration,
-  priority~ : Int = 0,
-  handler : () -> Unit
+  priority? : Int = 0,
+  handler : () -> Unit,
 ) -> EventId {
   let target_time = self.current_time.add(delay)
   self.schedule_at(target_time, priority~, handler)
@@ -85,8 +83,8 @@ pub fn Simulator::schedule(
 pub fn Simulator::schedule_at(
   self : Simulator,
   target_time : Time,
-  priority~ : Int = 0,
-  handler : () -> Unit
+  priority? : Int = 0,
+  handler : () -> Unit,
 ) -> EventId {
   let id = self.next_event_id
   self.next_event_id = self.next_event_id + 1

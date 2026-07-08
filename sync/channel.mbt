@@ -15,7 +15,7 @@ pub fn[T] Channel::new(
   id : Int,
   name : String,
   mgr : @process.ProcessManager,
-  capacity~ : Int = 0
+  capacity? : Int = 0,
 ) -> Channel[T] {
   { id, name, capacity, buffer: [], mgr }
 }

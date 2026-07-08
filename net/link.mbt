@@ -14,9 +14,9 @@ pub(all) struct Link {
 pub fn Link::new(
   name : String,
   latency : @core.Duration,
-  bandwidth~ : Double = 0.0,
-  loss_rate~ : Double = 0.0,
-  jitter~ : @core.Duration = @core.Duration::zero()
+  bandwidth? : Double = 0.0,
+  loss_rate? : Double = 0.0,
+  jitter? : @core.Duration = @core.Duration::zero(),
 ) -> Link {
   { name, latency, bandwidth, loss_rate, jitter }
 }
@@ -35,7 +35,7 @@ pub fn[T] Link::transmit(
   packet : Packet[T],
   sim : @core.Simulator,
   on_receive : (Packet[T]) -> Unit,
-  on_drop : (Packet[T]) -> Unit
+  on_drop : (Packet[T]) -> Unit,
 ) -> Unit {
   // 1. 确定性丢包检测
   if self.loss_rate > 0.0 {
@@ -66,8 +66,6 @@ pub fn[T] Link::transmit(
 
   // Total Delay
   let total_delay = self.latency.add(trans_delay).add(jitter_delay)
-  let _ = sim.schedule(total_delay, priority=0, () => {
-    on_receive(packet)
-  })
+  let _ = sim.schedule(total_delay, priority=0, () => on_receive(packet))
   ()
 }

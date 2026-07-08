@@ -12,13 +12,7 @@ pub(all) struct Histogram {
 ///|
 /// 创建新的直方图
 pub fn Histogram::new(name : String) -> Histogram {
-  {
-    name,
-    samples: [],
-    sum: 0.0,
-    max_val: 0.0,
-    min_val: 1.0e18,
-  }
+  { name, samples: [], sum: 0.0, max_val: 0.0, min_val: 1.0e18 }
 }
 
 ///|

@@ -9,7 +9,7 @@ pub(all) struct ChaosRunner {
 
 ///|
 /// 创建新的混沌测试引擎
-pub fn ChaosRunner::new(iterations~ : Int = 10) -> ChaosRunner {
+pub fn ChaosRunner::new(iterations? : Int = 10) -> ChaosRunner {
   { iterations, passed: 0, failed: 0 }
 }
 
@@ -18,7 +18,7 @@ pub fn ChaosRunner::new(iterations~ : Int = 10) -> ChaosRunner {
 /// `test_factory`: 接收一个种子 UInt64，构造并返回运行完测试后是否满足不变性的布尔结果
 pub fn ChaosRunner::run(
   self : ChaosRunner,
-  test_factory : (UInt64) -> Bool
+  test_factory : (UInt64) -> Bool,
 ) -> Bool {
   for i = 1; i <= self.iterations; i = i + 1 {
     let seed = i.to_uint64()

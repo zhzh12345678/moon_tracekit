@@ -14,7 +14,7 @@ pub fn Semaphore::new(
   id : Int,
   name : String,
   permits : Int,
-  mgr : @process.ProcessManager
+  mgr : @process.ProcessManager,
 ) -> Semaphore {
   { id, name, permits, mgr }
 }

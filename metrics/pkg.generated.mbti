@@ -1,0 +1,56 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "bins-c-language/moon_event_sim/metrics"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct Counter {
+  name : String
+  mut value : Int64
+}
+pub fn Counter::get(Self) -> Int64
+pub fn Counter::inc(Self, delta? : Int64) -> Unit
+pub fn Counter::new(String) -> Self
+
+pub(all) struct Gauge {
+  name : String
+  mut value : Double
+}
+pub fn Gauge::add(Self, Double) -> Unit
+pub fn Gauge::get(Self) -> Double
+pub fn Gauge::new(String, init_val? : Double) -> Self
+pub fn Gauge::set(Self, Double) -> Unit
+pub fn Gauge::sub(Self, Double) -> Unit
+
+pub(all) struct Histogram {
+  name : String
+  samples : Array[Double]
+  mut sum : Double
+  mut max_val : Double
+  mut min_val : Double
+}
+pub fn Histogram::count(Self) -> Int
+pub fn Histogram::max(Self) -> Double
+pub fn Histogram::mean(Self) -> Double
+pub fn Histogram::min(Self) -> Double
+pub fn Histogram::new(String) -> Self
+pub fn Histogram::percentile(Self, Double) -> Double
+pub fn Histogram::record(Self, Double) -> Unit
+
+pub(all) struct MetricsRegistry {
+  counters : Map[String, Counter]
+  gauges : Map[String, Gauge]
+  histograms : Map[String, Histogram]
+}
+pub fn MetricsRegistry::counter(Self, String) -> Counter
+pub fn MetricsRegistry::gauge(Self, String) -> Gauge
+pub fn MetricsRegistry::histogram(Self, String) -> Histogram
+pub fn MetricsRegistry::new() -> Self
+pub fn MetricsRegistry::summary(Self) -> String
+
+// Type aliases
+
+// Traits
+

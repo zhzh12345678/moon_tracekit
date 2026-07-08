@@ -1,0 +1,54 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "bins-c-language/moon_event_sim/net"
+
+import {
+  "bins-c-language/moon_event_sim/core",
+  "moonbitlang/core/debug",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct Link {
+  name : String
+  latency : @core.Duration
+  bandwidth : Double
+  mut loss_rate : Double
+  jitter : @core.Duration
+}
+pub fn Link::new(String, @core.Duration, bandwidth? : Double, loss_rate? : Double, jitter? : @core.Duration) -> Self
+pub fn Link::set_loss_rate(Self, Double) -> Unit
+pub fn[T] Link::transmit(Self, Packet[T], @core.Simulator, (Packet[T]) -> Unit, (Packet[T]) -> Unit) -> Unit
+
+pub(all) struct NetworkTopology[T] {
+  sim : @core.Simulator
+  links : Map[String, Link]
+  inboxes : Map[String, Array[Packet[T]]]
+  mut dropped_count : Int
+  mut delivered_count : Int
+}
+pub fn[T] NetworkTopology::add_bidirectional_link(Self[T], String, String, @core.Duration, bandwidth? : Double, loss_rate? : Double) -> Unit
+pub fn[T] NetworkTopology::add_link(Self[T], String, String, Link) -> Unit
+pub fn[T] NetworkTopology::delivered_count(Self[T]) -> Int
+pub fn[T] NetworkTopology::dropped_count(Self[T]) -> Int
+pub fn[T] NetworkTopology::get_link(Self[T], String, String) -> Link?
+pub fn[T] NetworkTopology::new(@core.Simulator) -> Self[T]
+pub fn[T] NetworkTopology::receive(Self[T], String) -> Packet[T]?
+pub fn[T] NetworkTopology::send_packet(Self[T], Packet[T]) -> Bool
+
+pub(all) struct Packet[T] {
+  id : Int
+  src : String
+  dst : String
+  size : Int
+  payload : T
+  send_time : @core.Time
+} derive(Compare, Eq, @debug.Debug)
+pub fn[T] Packet::new(Int, String, String, T, @core.Time, size? : Int) -> Self[T]
+
+// Type aliases
+
+// Traits
+

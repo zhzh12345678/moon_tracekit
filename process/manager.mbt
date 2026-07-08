@@ -11,12 +11,7 @@ pub(all) struct ProcessManager {
 ///|
 /// 创建一个新的进程管理器
 pub fn ProcessManager::new(sim : @core.Simulator) -> ProcessManager {
-  {
-    sim,
-    next_pid: 1,
-    processes: Map([]),
-    waiting_map: Map([]),
-  }
+  { sim, next_pid: 1, processes: Map([]), waiting_map: Map([]) }
 }
 
 ///|
@@ -33,7 +28,10 @@ pub fn ProcessManager::process_count(self : ProcessManager) -> Int {
 
 ///|
 /// 根据 ID 查询进程状态
-pub fn ProcessManager::get_state(self : ProcessManager, pid : ProcessId) -> ProcessState? {
+pub fn ProcessManager::get_state(
+  self : ProcessManager,
+  pid : ProcessId,
+) -> ProcessState? {
   match self.processes.get(pid) {
     None => None
     Some(p) => Some(p.state)
@@ -46,7 +44,7 @@ pub fn ProcessManager::get_state(self : ProcessManager, pid : ProcessId) -> Proc
 pub fn ProcessManager::spawn(
   self : ProcessManager,
   name : String,
-  handler : (ProcessContext) -> StepResult
+  handler : (ProcessContext) -> StepResult,
 ) -> ProcessId {
   let pid = self.next_pid
   self.next_pid = self.next_pid + 1
@@ -94,12 +92,8 @@ fn ProcessManager::step_process(self : ProcessManager, pid : ProcessId) -> Unit 
         WaitEvent(event_key) => {
           proc.state = Waiting
           match self.waiting_map.get(event_key) {
-            None => {
-              self.waiting_map.set(event_key, [pid])
-            }
-            Some(list) => {
-              list.push(pid)
-            }
+            None => self.waiting_map.set(event_key, [pid])
+            Some(list) => list.push(pid)
           }
           ()
         }
@@ -114,7 +108,10 @@ fn ProcessManager::step_process(self : ProcessManager, pid : ProcessId) -> Unit 
 
 ///|
 /// 触发同步事件键，唤醒所有在 event_key 上等待的虚拟进程
-pub fn ProcessManager::signal_event(self : ProcessManager, event_key : Int) -> Int {
+pub fn ProcessManager::signal_event(
+  self : ProcessManager,
+  event_key : Int,
+) -> Int {
   match self.waiting_map.get(event_key) {
     None => 0
     Some(list) => {
@@ -123,7 +120,7 @@ pub fn ProcessManager::signal_event(self : ProcessManager, event_key : Int) -> I
         let pid = list[i]
         match self.processes.get(pid) {
           None => ()
-          Some(proc) => {
+          Some(proc) =>
             if proc.state == Waiting {
               proc.state = Ready
               let _ = self.sim.schedule(@core.Duration::zero(), priority=0, () => {
@@ -131,7 +128,6 @@ pub fn ProcessManager::signal_event(self : ProcessManager, event_key : Int) -> I
               })
               ()
             }
-          }
         }
       }
       self.waiting_map.remove(event_key)

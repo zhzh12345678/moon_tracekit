@@ -31,7 +31,10 @@ pub fn[T] PriorityQueue::clear(self : PriorityQueue[T]) -> Unit {
 
 ///|
 /// 向优先队列插入元素
-pub fn[T : Compare] PriorityQueue::push(self : PriorityQueue[T], item : T) -> Unit {
+pub fn[T : Compare] PriorityQueue::push(
+  self : PriorityQueue[T],
+  item : T,
+) -> Unit {
   self.items.push(item)
   self.sift_up(self.items.length() - 1)
 }
@@ -65,7 +68,10 @@ pub fn[T : Compare] PriorityQueue::pop(self : PriorityQueue[T]) -> T? {
 
 ///|
 /// 内部自底向上调整堆
-fn[T : Compare] PriorityQueue::sift_up(self : PriorityQueue[T], index : Int) -> Unit {
+fn[T : Compare] PriorityQueue::sift_up(
+  self : PriorityQueue[T],
+  index : Int,
+) -> Unit {
   let mut idx = index
   while idx > 0 {
     let parent = (idx - 1) / 2
@@ -82,7 +88,10 @@ fn[T : Compare] PriorityQueue::sift_up(self : PriorityQueue[T], index : Int) -> 
 
 ///|
 /// 内部自顶向下调整堆
-fn[T : Compare] PriorityQueue::sift_down(self : PriorityQueue[T], index : Int) -> Unit {
+fn[T : Compare] PriorityQueue::sift_down(
+  self : PriorityQueue[T],
+  index : Int,
+) -> Unit {
   let len = self.items.length()
   let mut idx = index
   while true {

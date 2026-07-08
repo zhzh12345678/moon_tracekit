@@ -11,7 +11,11 @@ pub(all) struct Mutex {
 
 ///|
 /// 创建一个新的互斥锁
-pub fn Mutex::new(id : Int, name : String, mgr : @process.ProcessManager) -> Mutex {
+pub fn Mutex::new(
+  id : Int,
+  name : String,
+  mgr : @process.ProcessManager,
+) -> Mutex {
   { id, name, is_locked: false, owner: None, mgr }
 }
 

@@ -1,0 +1,47 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "bins-c-language/moon_event_sim/examples/raft"
+
+import {
+  "bins-c-language/moon_event_sim/core",
+  "bins-c-language/moon_event_sim/fault",
+  "bins-c-language/moon_event_sim/net",
+  "moonbitlang/core/debug",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) enum RaftMsg {
+  RequestVote(Int, String)
+  VoteResponse(Int, Bool, String)
+  Heartbeat(Int, String)
+} derive(Compare, Eq, @debug.Debug)
+
+pub(all) struct RaftNode {
+  id : String
+  sim : @core.Simulator
+  net : @net.NetworkTopology[RaftMsg]
+  mut current_term : Int
+  mut role : RaftRole
+  mut voted_for : String?
+  mut votes_received : Int
+  mut leader_id : String?
+  mut last_heartbeat : @core.Time
+  mut election_timeout : Int64
+}
+pub fn RaftNode::new(String, @core.Simulator, @net.NetworkTopology[RaftMsg]) -> Self
+pub fn RaftNode::simulate_partition(Self, @fault.FaultInjector, String, @core.Duration) -> Unit
+pub fn RaftNode::start(Self, Array[String]) -> Unit
+
+pub(all) enum RaftRole {
+  Follower
+  Candidate
+  Leader
+} derive(Compare, Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits
+

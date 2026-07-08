@@ -27,7 +27,7 @@ pub fn[T] NetworkTopology::add_link(
   self : NetworkTopology[T],
   src : String,
   dst : String,
-  link : Link
+  link : Link,
 ) -> Unit {
   self.links.set("\{src}->\{dst}", link)
   match self.inboxes.get(dst) {
@@ -43,11 +43,21 @@ pub fn[T] NetworkTopology::add_bidirectional_link(
   node_a : String,
   node_b : String,
   latency : @core.Duration,
-  bandwidth~ : Double = 0.0,
-  loss_rate~ : Double = 0.0
+  bandwidth? : Double = 0.0,
+  loss_rate? : Double = 0.0,
 ) -> Unit {
-  let link_a = Link::new("\{node_a}->\{node_b}", latency, bandwidth~, loss_rate~)
-  let link_b = Link::new("\{node_b}->\{node_a}", latency, bandwidth~, loss_rate~)
+  let link_a = Link::new(
+    "\{node_a}->\{node_b}",
+    latency,
+    bandwidth~,
+    loss_rate~,
+  )
+  let link_b = Link::new(
+    "\{node_b}->\{node_a}",
+    latency,
+    bandwidth~,
+    loss_rate~,
+  )
   self.add_link(node_a, node_b, link_a)
   self.add_link(node_b, node_a, link_b)
 }
@@ -57,7 +67,7 @@ pub fn[T] NetworkTopology::add_bidirectional_link(
 pub fn[T] NetworkTopology::get_link(
   self : NetworkTopology[T],
   src : String,
-  dst : String
+  dst : String,
 ) -> Link? {
   self.links.get("\{src}->\{dst}")
 }
@@ -67,7 +77,7 @@ pub fn[T] NetworkTopology::get_link(
 /// 如果源和目的节点存在链路，则在链路上模拟传输；否则丢弃并计数
 pub fn[T] NetworkTopology::send_packet(
   self : NetworkTopology[T],
-  packet : Packet[T]
+  packet : Packet[T],
 ) -> Bool {
   let key = "\{packet.src}->\{packet.dst}"
   match self.links.get(key) {
@@ -82,17 +92,11 @@ pub fn[T] NetworkTopology::send_packet(
         fn(pkt) {
           self.delivered_count = self.delivered_count + 1
           match self.inboxes.get(pkt.dst) {
-            None => {
-              self.inboxes.set(pkt.dst, [pkt])
-            }
-            Some(arr) => {
-              arr.push(pkt)
-            }
+            None => self.inboxes.set(pkt.dst, [pkt])
+            Some(arr) => arr.push(pkt)
           }
         },
-        fn(_pkt) {
-          self.dropped_count = self.dropped_count + 1
-        },
+        fn(_pkt) { self.dropped_count = self.dropped_count + 1 },
       )
       true
     }
@@ -103,17 +107,11 @@ pub fn[T] NetworkTopology::send_packet(
 /// 从指定节点信箱接收已到达的数据包（非阻塞获取）
 pub fn[T] NetworkTopology::receive(
   self : NetworkTopology[T],
-  node : String
+  node : String,
 ) -> Packet[T]? {
   match self.inboxes.get(node) {
     None => None
-    Some(arr) => {
-      if arr.is_empty() {
-        None
-      } else {
-        Some(arr.remove(0))
-      }
-    }
+    Some(arr) => if arr.is_empty() { None } else { Some(arr.remove(0)) }
   }
 }
 

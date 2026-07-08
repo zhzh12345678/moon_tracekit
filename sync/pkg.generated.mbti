@@ -1,0 +1,66 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "bins-c-language/moon_event_sim/sync"
+
+import {
+  "bins-c-language/moon_event_sim/process",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct Barrier {
+  id : Int
+  name : String
+  parties : Int
+  mut arrived : Int
+  mgr : @process.ProcessManager
+}
+pub fn Barrier::arrive_and_wait(Self) -> Bool
+pub fn Barrier::new(Int, String, Int, @process.ProcessManager) -> Self
+pub fn Barrier::wait_barrier(Self) -> @process.StepResult
+
+pub(all) struct Channel[T] {
+  id : Int
+  name : String
+  capacity : Int
+  buffer : Array[T]
+  mgr : @process.ProcessManager
+}
+pub fn[T] Channel::is_empty(Self[T]) -> Bool
+pub fn[T] Channel::length(Self[T]) -> Int
+pub fn[T] Channel::new(Int, String, @process.ProcessManager, capacity? : Int) -> Self[T]
+pub fn[T] Channel::try_recv(Self[T]) -> T?
+pub fn[T] Channel::try_send(Self[T], T) -> Bool
+pub fn[T] Channel::wait_recv(Self[T]) -> @process.StepResult
+pub fn[T] Channel::wait_send(Self[T]) -> @process.StepResult
+
+pub(all) struct Mutex {
+  id : Int
+  name : String
+  mut is_locked : Bool
+  mut owner : Int?
+  mgr : @process.ProcessManager
+}
+pub fn Mutex::new(Int, String, @process.ProcessManager) -> Self
+pub fn Mutex::try_lock(Self, Int) -> Bool
+pub fn Mutex::unlock(Self, Int) -> Bool
+pub fn Mutex::wait_lock(Self) -> @process.StepResult
+
+pub(all) struct Semaphore {
+  id : Int
+  name : String
+  mut permits : Int
+  mgr : @process.ProcessManager
+}
+pub fn Semaphore::available_permits(Self) -> Int
+pub fn Semaphore::new(Int, String, Int, @process.ProcessManager) -> Self
+pub fn Semaphore::release(Self) -> Unit
+pub fn Semaphore::try_acquire(Self) -> Bool
+pub fn Semaphore::wait_acquire(Self) -> @process.StepResult
+
+// Type aliases
+
+// Traits
+

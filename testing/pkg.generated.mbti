@@ -1,0 +1,29 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "bins-c-language/moon_event_sim/testing"
+
+import {
+  "bins-c-language/moon_event_sim/core",
+}
+
+// Values
+pub fn assert_event_count_at_least(@core.Simulator, Int64) -> Bool
+
+pub fn assert_sim_time(@core.Simulator, @core.Time) -> Bool
+
+// Errors
+
+// Types and methods
+pub(all) struct ChaosRunner {
+  iterations : Int
+  mut passed : Int
+  mut failed : Int
+}
+pub fn ChaosRunner::failed_count(Self) -> Int
+pub fn ChaosRunner::new(iterations? : Int) -> Self
+pub fn ChaosRunner::passed_count(Self) -> Int
+pub fn ChaosRunner::run(Self, (UInt64) -> Bool) -> Bool
+
+// Type aliases
+
+// Traits
+

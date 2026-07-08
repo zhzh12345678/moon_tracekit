@@ -14,7 +14,7 @@ pub fn Counter::new(name : String) -> Counter {
 
 ///|
 /// 增加计数
-pub fn Counter::inc(self : Counter, delta~ : Int64 = 1L) -> Unit {
+pub fn Counter::inc(self : Counter, delta? : Int64 = 1L) -> Unit {
   if delta > 0L {
     self.value = self.value + delta
   }

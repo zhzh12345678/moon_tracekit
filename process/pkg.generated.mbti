@@ -1,0 +1,87 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "bins-c-language/moon_event_sim/process"
+
+import {
+  "bins-c-language/moon_event_sim/core",
+  "moonbitlang/core/debug",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct Actor[Msg] {
+  name : String
+  sim : @core.Simulator
+  mailbox : Array[Msg]
+  handler : (ActorContext[Msg], Msg) -> Unit
+  mut is_processing : Bool
+}
+pub fn[Msg] Actor::new(String, @core.Simulator, (ActorContext[Msg], Msg) -> Unit) -> Self[Msg]
+pub fn[Msg] Actor::send(Self[Msg], Msg, delay? : @core.Duration) -> Unit
+
+pub(all) struct ActorContext[Msg] {
+  name : String
+  sim : @core.Simulator
+  self_actor : Actor[Msg]
+}
+pub fn[Msg] ActorContext::now(Self[Msg]) -> @core.Time
+
+pub(all) struct Process {
+  id : Int
+  name : String
+  mut state : ProcessState
+  handler : (ProcessContext) -> StepResult
+}
+pub fn Process::new(Int, String, (ProcessContext) -> StepResult) -> Self
+
+pub(all) struct ProcessContext {
+  pid : Int
+  name : String
+  sim : @core.Simulator
+}
+pub fn ProcessContext::name(Self) -> String
+pub fn ProcessContext::new(Int, String, @core.Simulator) -> Self
+pub fn ProcessContext::now(Self) -> @core.Time
+pub fn ProcessContext::pid(Self) -> Int
+pub fn ProcessContext::sim(Self) -> @core.Simulator
+pub fn ProcessContext::sleep(Self, @core.Duration) -> StepResult
+pub fn ProcessContext::sleep_until(Self, @core.Time) -> StepResult
+pub fn ProcessContext::terminate(Self) -> StepResult
+pub fn ProcessContext::wait_for(Self, Int) -> StepResult
+pub fn ProcessContext::yield_now(Self) -> StepResult
+
+pub(all) struct ProcessManager {
+  sim : @core.Simulator
+  mut next_pid : Int
+  processes : Map[Int, Process]
+  waiting_map : Map[Int, Array[Int]]
+}
+pub fn ProcessManager::get_state(Self, Int) -> ProcessState?
+pub fn ProcessManager::kill(Self, Int) -> Bool
+pub fn ProcessManager::new(@core.Simulator) -> Self
+pub fn ProcessManager::process_count(Self) -> Int
+pub fn ProcessManager::signal_event(Self, Int) -> Int
+pub fn ProcessManager::sim(Self) -> @core.Simulator
+pub fn ProcessManager::spawn(Self, String, (ProcessContext) -> StepResult) -> Int
+
+pub(all) enum ProcessState {
+  Ready
+  Running
+  Waiting
+  Terminated
+} derive(Compare, Eq, @debug.Debug)
+
+pub(all) enum StepResult {
+  Continue
+  Sleep(@core.Duration)
+  WaitEvent(Int)
+  Terminate
+} derive(Compare, Eq, @debug.Debug)
+
+// Type aliases
+pub type ProcessId = Int
+
+// Traits
+

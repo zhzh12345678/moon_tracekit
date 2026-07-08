@@ -1,0 +1,35 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "bins-c-language/moon_event_sim/fault"
+
+import {
+  "bins-c-language/moon_event_sim/core",
+  "bins-c-language/moon_event_sim/net",
+  "moonbitlang/core/debug",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct FaultInjector {
+  sim : @core.Simulator
+  crashed_nodes : Map[String, Bool]
+  partitions : Array[(Array[String], Array[String])]
+}
+pub fn FaultInjector::is_node_crashed(Self, String) -> Bool
+pub fn FaultInjector::is_partitioned(Self, String, String) -> Bool
+pub fn FaultInjector::new(@core.Simulator) -> Self
+pub fn[T] FaultInjector::schedule_fault(Self, @core.Duration, FaultType, @core.Duration, @net.NetworkTopology[T]) -> Unit
+pub fn FaultInjector::should_drop_packet(Self, String, String) -> Bool
+
+pub(all) enum FaultType {
+  NetworkPartition(Array[String], Array[String])
+  NodeCrash(String)
+  PacketDropSpike(String, String, Double)
+} derive(Compare, Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits
+

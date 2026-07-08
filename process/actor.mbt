@@ -22,15 +22,9 @@ pub(all) struct ActorContext[Msg] {
 pub fn[Msg] Actor::new(
   name : String,
   sim : @core.Simulator,
-  handler : (ActorContext[Msg], Msg) -> Unit
+  handler : (ActorContext[Msg], Msg) -> Unit,
 ) -> Actor[Msg] {
-  {
-    name,
-    sim,
-    mailbox: [],
-    handler,
-    is_processing: false,
-  }
+  { name, sim, mailbox: [], handler, is_processing: false }
 }
 
 ///|
@@ -45,7 +39,7 @@ pub fn[Msg] ActorContext::now(self : ActorContext[Msg]) -> @core.Time {
 pub fn[Msg] Actor::send(
   self : Actor[Msg],
   msg : Msg,
-  delay~ : @core.Duration = @core.Duration::zero()
+  delay? : @core.Duration = @core.Duration::zero(),
 ) -> Unit {
   let _ = self.sim.schedule(delay, priority=0, () => {
     self.mailbox.push(msg)

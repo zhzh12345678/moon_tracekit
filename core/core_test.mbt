@@ -50,12 +50,8 @@ test "priority queue min heap" {
 test "simulator scheduling and execution" {
   let sim = Simulator::new()
   let mut log = ""
-  let _ = sim.schedule(Duration::from_millis(100L), () => {
-    log = log + "e1;"
-  })
-  let _ = sim.schedule(Duration::from_millis(50L), () => {
-    log = log + "e2;"
-  })
+  let _ = sim.schedule(Duration::from_millis(100L), () => log = log + "e1;")
+  let _ = sim.schedule(Duration::from_millis(50L), () => log = log + "e2;")
   let _ = sim.schedule(Duration::from_millis(100L), priority=-1, () => {
     log = log + "e3_prio;"
   })

@@ -35,7 +35,7 @@ pub(all) struct ProcessContext {
 pub fn ProcessContext::new(
   pid : ProcessId,
   name : String,
-  sim : @core.Simulator
+  sim : @core.Simulator,
 ) -> ProcessContext {
   { pid, name, sim }
 }
@@ -68,7 +68,7 @@ pub fn ProcessContext::sim(self : ProcessContext) -> @core.Simulator {
 /// 协作式原语：休眠指定时长
 pub fn ProcessContext::sleep(
   self : ProcessContext,
-  dur : @core.Duration
+  dur : @core.Duration,
 ) -> StepResult {
   let _ = self
   Sleep(dur)
@@ -78,7 +78,7 @@ pub fn ProcessContext::sleep(
 /// 协作式原语：休眠直至绝对时间点
 pub fn ProcessContext::sleep_until(
   self : ProcessContext,
-  target : @core.Time
+  target : @core.Time,
 ) -> StepResult {
   let dur = target.sub(self.now())
   if dur.to_nanos() <= 0L {
@@ -99,7 +99,7 @@ pub fn ProcessContext::yield_now(self : ProcessContext) -> StepResult {
 /// 协作式原语：等待同步事件键
 pub fn ProcessContext::wait_for(
   self : ProcessContext,
-  event_key : Int
+  event_key : Int,
 ) -> StepResult {
   let _ = self
   WaitEvent(event_key)
@@ -126,7 +126,7 @@ pub(all) struct Process {
 pub fn Process::new(
   id : ProcessId,
   name : String,
-  handler : (ProcessContext) -> StepResult
+  handler : (ProcessContext) -> StepResult,
 ) -> Process {
   { id, name, state: Ready, handler }
 }

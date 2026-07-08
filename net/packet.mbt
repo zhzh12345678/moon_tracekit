@@ -18,7 +18,7 @@ pub fn[T] Packet::new(
   dst : String,
   payload : T,
   send_time : @core.Time,
-  size~ : Int = 64
+  size? : Int = 64,
 ) -> Packet[T] {
   { id, src, dst, size, payload, send_time }
 }

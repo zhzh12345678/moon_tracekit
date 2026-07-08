@@ -38,7 +38,8 @@ pub fn PCG32::next_uint(self : PCG32) -> UInt {
   // XSH RR (xorshift high, random rotate)
   let xorshifted = (((oldstate >> 18) ^ oldstate) >> 27).to_uint()
   let rot = (oldstate >> 59).to_uint()
-  (xorshifted >> rot.reinterpret_as_int()) | (xorshifted << ((rot ^ 31U) + 1U).reinterpret_as_int())
+  (xorshifted >> rot.reinterpret_as_int()) |
+  (xorshifted << ((rot ^ 31U) + 1U).reinterpret_as_int())
 }
 
 ///|
@@ -68,12 +69,16 @@ pub fn PCG32::next_int_range(self : PCG32, min : Int, max : Int) -> Int {
     return min
   }
   let span = max - min + 1
-  min + (self.next_int() % span)
+  min + self.next_int() % span
 }
 
 ///|
 /// 生成 [min, max) 范围内的浮点数
-pub fn PCG32::next_float_range(self : PCG32, min : Double, max : Double) -> Double {
+pub fn PCG32::next_float_range(
+  self : PCG32,
+  min : Double,
+  max : Double,
+) -> Double {
   if min >= max {
     return min
   }
@@ -108,7 +113,7 @@ pub fn PCG32::next_exponential(self : PCG32, rate : Double) -> Double {
     u = 0.0000001
   }
   let ln_val = log_double(u)
-  -(ln_val) / rate
+  -ln_val / rate
 }
 
 ///|
@@ -116,7 +121,11 @@ pub fn PCG32::next_exponential(self : PCG32, rate : Double) -> Double {
 /// `mean`: 均值 μ
 /// `std_dev`: 标准差 σ
 /// 使用 Box-Muller 变换，用于模拟网络延迟的真实高斯抖动
-pub fn PCG32::next_normal(self : PCG32, mean : Double, std_dev : Double) -> Double {
+pub fn PCG32::next_normal(
+  self : PCG32,
+  mean : Double,
+  std_dev : Double,
+) -> Double {
   if std_dev <= 0.0 {
     return mean
   }

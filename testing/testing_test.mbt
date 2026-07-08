@@ -2,9 +2,11 @@
 test "chaos runner verification across seeds" {
   let runner = ChaosRunner::new(iterations=5)
   let all_ok = runner.run(fn(seed) {
-    let sim = @core.Simulator::new(
-      options={ max_time: @core.Time::from_secs(10L), max_events: 1000L, seed },
-    )
+    let sim = @core.Simulator::new(options={
+      max_time: @core.Time::from_secs(10L),
+      max_events: 1000L,
+      seed,
+    })
     let mut log_count = 0
     for j = 0; j < 5; j = j + 1 {
       let _ = sim.schedule(@core.Duration::from_millis((j * 10).to_int64()), () => {

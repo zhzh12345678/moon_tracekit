@@ -19,16 +19,15 @@ pub(all) struct FaultInjector {
 ///|
 /// 创建新的故障注入器
 pub fn FaultInjector::new(sim : @core.Simulator) -> FaultInjector {
-  {
-    sim,
-    crashed_nodes: Map([]),
-    partitions: [],
-  }
+  { sim, crashed_nodes: Map([]), partitions: [] }
 }
 
 ///|
 /// 检查指定节点是否处于宕机状态
-pub fn FaultInjector::is_node_crashed(self : FaultInjector, node : String) -> Bool {
+pub fn FaultInjector::is_node_crashed(
+  self : FaultInjector,
+  node : String,
+) -> Bool {
   match self.crashed_nodes.get(node) {
     None => false
     Some(val) => val
@@ -40,13 +39,13 @@ pub fn FaultInjector::is_node_crashed(self : FaultInjector, node : String) -> Bo
 pub fn FaultInjector::is_partitioned(
   self : FaultInjector,
   node_a : String,
-  node_b : String
+  node_b : String,
 ) -> Bool {
   let count = self.partitions.length()
   for i = 0; i < count; i = i + 1 {
     let (g1, g2) = self.partitions[i]
     if (contains(g1, node_a) && contains(g2, node_b)) ||
-       (contains(g2, node_a) && contains(g1, node_b)) {
+      (contains(g2, node_a) && contains(g1, node_b)) {
       return true
     }
   }
@@ -70,7 +69,7 @@ fn contains(arr : Array[String], item : String) -> Bool {
 pub fn FaultInjector::should_drop_packet(
   self : FaultInjector,
   src : String,
-  dst : String
+  dst : String,
 ) -> Bool {
   if self.is_node_crashed(src) || self.is_node_crashed(dst) {
     return true
@@ -85,23 +84,18 @@ pub fn[T] FaultInjector::schedule_fault(
   start_delay : @core.Duration,
   fault : FaultType,
   duration : @core.Duration,
-  net : @net.NetworkTopology[T]
+  net : @net.NetworkTopology[T],
 ) -> Unit {
   // 调度故障开始
   let _ = self.sim.schedule(start_delay, priority=-1, () => {
     match fault {
-      NodeCrash(node) => {
-        self.crashed_nodes.set(node, true)
-      }
-      NetworkPartition(g1, g2) => {
-        self.partitions.push((g1, g2))
-      }
-      PacketDropSpike(src, dst, rate) => {
+      NodeCrash(node) => self.crashed_nodes.set(node, true)
+      NetworkPartition(g1, g2) => self.partitions.push((g1, g2))
+      PacketDropSpike(src, dst, rate) =>
         match net.get_link(src, dst) {
           None => ()
           Some(link) => link.set_loss_rate(rate)
         }
-      }
     }
   })
 
@@ -109,9 +103,7 @@ pub fn[T] FaultInjector::schedule_fault(
   let recover_time = start_delay.add(duration)
   let _ = self.sim.schedule(recover_time, priority=-1, () => {
     match fault {
-      NodeCrash(node) => {
-        self.crashed_nodes.set(node, false)
-      }
+      NodeCrash(node) => self.crashed_nodes.set(node, false)
       NetworkPartition(g1, g2) => {
         // 移除该分区记录
         let len = self.partitions.length()
@@ -123,12 +115,11 @@ pub fn[T] FaultInjector::schedule_fault(
           }
         }
       }
-      PacketDropSpike(src, dst, _rate) => {
+      PacketDropSpike(src, dst, _rate) =>
         match net.get_link(src, dst) {
           None => ()
           Some(link) => link.set_loss_rate(0.0)
         }
-      }
     }
   })
   ()

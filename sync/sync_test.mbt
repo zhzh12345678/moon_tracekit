@@ -72,19 +72,20 @@ test "mutex contention between processes" {
         order = order + "w2_waiting@\{ctx.now().to_string()};"
         return mutex.wait_lock()
       }
+    } else if mutex.try_lock(ctx.pid()) {
+      order = order + "w2_lock@\{ctx.now().to_string()};"
+      let _ = mutex.unlock(ctx.pid())
+      return ctx.terminate()
     } else {
-      if mutex.try_lock(ctx.pid()) {
-        order = order + "w2_lock@\{ctx.now().to_string()};"
-        let _ = mutex.unlock(ctx.pid())
-        return ctx.terminate()
-      } else {
-        return mutex.wait_lock()
-      }
+      return mutex.wait_lock()
     }
   })
 
   sim.run()
-  inspect(order, content="w1_lock@0ns;w2_waiting@50ms;w1_unlock@200ms;w2_lock@200ms;")
+  inspect(
+    order,
+    content="w1_lock@0ns;w2_waiting@50ms;w1_unlock@200ms;w2_lock@200ms;",
+  )
 }
 
 ///|
@@ -123,14 +124,12 @@ test "semaphore resource pooling" {
         log = log + "p2_wait@\{ctx.now().to_string()};"
         return sem.wait_acquire()
       }
+    } else if sem.try_acquire() {
+      log = log + "p2_acq@\{ctx.now().to_string()};"
+      sem.release()
+      return ctx.terminate()
     } else {
-      if sem.try_acquire() {
-        log = log + "p2_acq@\{ctx.now().to_string()};"
-        sem.release()
-        return ctx.terminate()
-      } else {
-        return sem.wait_acquire()
-      }
+      return sem.wait_acquire()
     }
   })
 
@@ -173,16 +172,17 @@ test "barrier synchronization" {
     if s_step == 0 {
       s_step = 1
       return ctx.sleep(@core.Duration::from_millis(150L))
+    } else if barrier.arrive_and_wait() {
+      log = log + "slow_triggered_barrier@\{ctx.now().to_string()};"
+      return ctx.terminate()
     } else {
-      if barrier.arrive_and_wait() {
-        log = log + "slow_triggered_barrier@\{ctx.now().to_string()};"
-        return ctx.terminate()
-      } else {
-        return barrier.wait_barrier()
-      }
+      return barrier.wait_barrier()
     }
   })
 
   sim.run()
-  inspect(log, content="fast_waiting@50ms;slow_triggered_barrier@150ms;fast_woke@150ms;")
+  inspect(
+    log,
+    content="fast_waiting@50ms;slow_triggered_barrier@150ms;fast_woke@150ms;",
+  )
 }

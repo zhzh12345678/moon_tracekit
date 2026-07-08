@@ -18,7 +18,7 @@ pub(all) struct Event {
 ///|
 /// 为优先队列实现比较规则
 /// 最小堆规则：执行时间越早越优先；时间相同看优先级（数字越小越优先）；都相同看 ID
-pub impl Compare for Event with compare(self : Event, other : Event) -> Int {
+pub impl Compare for Event with fn compare(self : Event, other : Event) -> Int {
   let time_cmp = self.time.compare(other.time)
   if time_cmp != 0 {
     return time_cmp
@@ -32,8 +32,10 @@ pub impl Compare for Event with compare(self : Event, other : Event) -> Int {
 
 ///|
 /// 判断两个事件是否相等
-pub impl Eq for Event with equal(self : Event, other : Event) -> Bool {
-  self.id == other.id && self.time == other.time && self.priority == other.priority
+pub impl Eq for Event with fn equal(self : Event, other : Event) -> Bool {
+  self.id == other.id &&
+  self.time == other.time &&
+  self.priority == other.priority
 }
 
 ///|
@@ -41,8 +43,8 @@ pub impl Eq for Event with equal(self : Event, other : Event) -> Bool {
 pub fn Event::new(
   id : EventId,
   time : Time,
-  priority~ : Int = 0,
-  handler : () -> Unit
+  priority? : Int = 0,
+  handler : () -> Unit,
 ) -> Event {
   { id, time, priority, handler }
 }

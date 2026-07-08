@@ -1,0 +1,33 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "bins-c-language/moon_event_sim/examples/queue"
+
+import {
+  "bins-c-language/moon_event_sim/core",
+  "bins-c-language/moon_event_sim/metrics",
+  "bins-c-language/moon_event_sim/process",
+  "bins-c-language/moon_event_sim/sync",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct QueueSim {
+  sim : @core.Simulator
+  mgr : @process.ProcessManager
+  server_mutex : @sync.Mutex
+  arrival_rate : Double
+  service_rate : Double
+  reg : @metrics.MetricsRegistry
+  latency_hist : @metrics.Histogram
+  served_counter : @metrics.Counter
+}
+pub fn QueueSim::get_report(Self) -> String
+pub fn QueueSim::new(@core.Simulator, Double, Double) -> Self
+pub fn QueueSim::start(Self, Int) -> Unit
+
+// Type aliases
+
+// Traits
+

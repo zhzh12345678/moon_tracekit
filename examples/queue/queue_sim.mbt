@@ -17,7 +17,7 @@ pub(all) struct QueueSim {
 pub fn QueueSim::new(
   sim : @core.Simulator,
   arrival_rate : Double,
-  service_rate : Double
+  service_rate : Double,
 ) -> QueueSim {
   let mgr = @process.ProcessManager::new(sim)
   let server_mutex = @sync.Mutex::new(9001, "server_lock", mgr)
@@ -40,7 +40,7 @@ pub fn QueueSim::new(
 /// 启动排队论仿真
 pub fn QueueSim::start(self : QueueSim, total_customers : Int) -> Unit {
   let mut cust_id = 0
-  
+
   // 客户到达生成器进程
   let mut gen_step = 0
   let _ = self.mgr.spawn("generator", fn(ctx) {

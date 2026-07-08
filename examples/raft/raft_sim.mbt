@@ -34,7 +34,7 @@ pub(all) struct RaftNode {
 pub fn RaftNode::new(
   id : String,
   sim : @core.Simulator,
-  net : @net.NetworkTopology[RaftMsg]
+  net : @net.NetworkTopology[RaftMsg],
 ) -> RaftNode {
   {
     id,
@@ -56,7 +56,7 @@ pub fn RaftNode::simulate_partition(
   self : RaftNode,
   injector : @fault.FaultInjector,
   target : String,
-  duration : @core.Duration
+  duration : @core.Duration,
 ) -> Unit {
   injector.schedule_fault(
     @core.Duration::from_millis(10L),
@@ -97,7 +97,7 @@ fn RaftNode::process_inbox(self : RaftNode, all_nodes : Array[String]) -> Unit {
   for ;; {
     match self.net.receive(self.id) {
       None => break
-      Some(pkt) => {
+      Some(pkt) =>
         match pkt.payload {
           RequestVote(term, cand_id) => {
             if term > self.current_term {
@@ -105,7 +105,7 @@ fn RaftNode::process_inbox(self : RaftNode, all_nodes : Array[String]) -> Unit {
               self.role = Follower
               self.voted_for = None
             }
-            let granted = if (term == self.current_term) &&
+            let granted = if term == self.current_term &&
               (self.voted_for == None || self.voted_for == Some(cand_id)) {
               self.voted_for = Some(cand_id)
               self.last_heartbeat = self.sim.now()
@@ -124,17 +124,16 @@ fn RaftNode::process_inbox(self : RaftNode, all_nodes : Array[String]) -> Unit {
             let _ = self.net.send_packet(resp)
             ()
           }
-          VoteResponse(term, granted, _voter_id) => {
+          VoteResponse(term, granted, _voter_id) =>
             if self.role == Candidate && term == self.current_term && granted {
               self.votes_received = self.votes_received + 1
-              if self.votes_received >= (all_nodes.length() / 2 + 1) {
+              if self.votes_received >= all_nodes.length() / 2 + 1 {
                 self.role = Leader
                 self.leader_id = Some(self.id)
                 self.send_heartbeats(all_nodes)
               }
             }
-          }
-          Heartbeat(term, leader) => {
+          Heartbeat(term, leader) =>
             if term >= self.current_term {
               self.current_term = term
               self.role = Follower
@@ -142,9 +141,7 @@ fn RaftNode::process_inbox(self : RaftNode, all_nodes : Array[String]) -> Unit {
               self.last_heartbeat = self.sim.now()
               self.reset_election_timeout()
             }
-          }
         }
-      }
     }
   }
 }
@@ -153,7 +150,7 @@ fn RaftNode::process_inbox(self : RaftNode, all_nodes : Array[String]) -> Unit {
 /// 检查选举超时或作为 Leader 发送心跳
 fn RaftNode::check_election_timeout(
   self : RaftNode,
-  all_nodes : Array[String]
+  all_nodes : Array[String],
 ) -> Unit {
   if self.role == Leader {
     self.send_heartbeats(all_nodes)
@@ -167,10 +164,7 @@ fn RaftNode::check_election_timeout(
 
 ///|
 /// 发起新一轮选举
-fn RaftNode::start_election(
-  self : RaftNode,
-  all_nodes : Array[String]
-) -> Unit {
+fn RaftNode::start_election(self : RaftNode, all_nodes : Array[String]) -> Unit {
   self.role = Candidate
   self.current_term = self.current_term + 1
   self.voted_for = Some(self.id)
@@ -197,7 +191,7 @@ fn RaftNode::start_election(
 /// Leader 广播心跳
 fn RaftNode::send_heartbeats(
   self : RaftNode,
-  all_nodes : Array[String]
+  all_nodes : Array[String],
 ) -> Unit {
   for i = 0; i < all_nodes.length(); i = i + 1 {
     let dst = all_nodes[i]

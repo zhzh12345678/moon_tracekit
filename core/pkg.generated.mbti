@@ -1,0 +1,120 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "bins-c-language/moon_event_sim/core"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct Duration {
+  nanos : Int64
+} derive(Compare, Eq, @debug.Debug)
+pub fn Duration::add(Self, Self) -> Self
+pub fn Duration::from_micros(Int64) -> Self
+pub fn Duration::from_millis(Int64) -> Self
+pub fn Duration::from_nanos(Int64) -> Self
+pub fn Duration::from_secs(Int64) -> Self
+pub fn Duration::from_secs_double(Double) -> Self
+pub fn Duration::is_zero(Self) -> Bool
+pub fn Duration::mul(Self, Int64) -> Self
+pub fn Duration::mul_double(Self, Double) -> Self
+pub fn Duration::sub(Self, Self) -> Self
+pub fn Duration::to_millis(Self) -> Int64
+pub fn Duration::to_millis_double(Self) -> Double
+pub fn Duration::to_nanos(Self) -> Int64
+pub fn Duration::to_secs(Self) -> Int64
+pub fn Duration::to_secs_double(Self) -> Double
+pub fn Duration::to_string(Self) -> String
+pub fn Duration::zero() -> Self
+
+pub(all) struct Event {
+  id : Int
+  time : Time
+  priority : Int
+  handler : () -> Unit
+}
+pub fn Event::new(Int, Time, priority? : Int, () -> Unit) -> Self
+pub impl Compare for Event
+pub impl Eq for Event
+
+pub(all) struct PCG32 {
+  mut state : UInt64
+  mut inc : UInt64
+}
+pub fn PCG32::new(UInt64, UInt64) -> Self
+pub fn PCG32::next_bool(Self, Double) -> Bool
+pub fn PCG32::next_exponential(Self, Double) -> Double
+pub fn PCG32::next_float(Self) -> Double
+pub fn PCG32::next_float_range(Self, Double, Double) -> Double
+pub fn PCG32::next_int(Self) -> Int
+pub fn PCG32::next_int_range(Self, Int, Int) -> Int
+pub fn PCG32::next_normal(Self, Double, Double) -> Double
+pub fn PCG32::next_uint(Self) -> UInt
+
+pub(all) struct PriorityQueue[T] {
+  items : Array[T]
+}
+pub fn[T] PriorityQueue::clear(Self[T]) -> Unit
+pub fn[T] PriorityQueue::is_empty(Self[T]) -> Bool
+pub fn[T] PriorityQueue::length(Self[T]) -> Int
+pub fn[T] PriorityQueue::new() -> Self[T]
+pub fn[T] PriorityQueue::peek(Self[T]) -> T?
+pub fn[T : Compare] PriorityQueue::pop(Self[T]) -> T?
+pub fn[T : Compare] PriorityQueue::push(Self[T], T) -> Unit
+
+pub(all) struct SimOptions {
+  max_time : Time
+  max_events : Int64
+  seed : UInt64
+}
+pub fn SimOptions::default() -> Self
+
+pub(all) struct Simulator {
+  mut current_time : Time
+  mut next_event_id : Int
+  mut event_count : Int64
+  mut is_running : Bool
+  options : SimOptions
+  queue : PriorityQueue[Event]
+  mut rng : PCG32
+}
+pub fn Simulator::event_count(Self) -> Int64
+pub fn Simulator::get_rng(Self) -> PCG32
+pub fn Simulator::is_running(Self) -> Bool
+pub fn Simulator::new(options? : SimOptions) -> Self
+pub fn Simulator::now(Self) -> Time
+pub fn Simulator::reset(Self) -> Unit
+pub fn Simulator::run(Self) -> Unit
+pub fn Simulator::run_until(Self, Time) -> Unit
+pub fn Simulator::schedule(Self, Duration, priority? : Int, () -> Unit) -> Int
+pub fn Simulator::schedule_at(Self, Time, priority? : Int, () -> Unit) -> Int
+pub fn Simulator::step(Self) -> Bool
+pub fn Simulator::stop(Self) -> Unit
+
+pub(all) struct Time {
+  nanos : Int64
+} derive(Compare, Eq, @debug.Debug)
+pub fn Time::add(Self, Duration) -> Self
+pub fn Time::from_micros(Int64) -> Self
+pub fn Time::from_millis(Int64) -> Self
+pub fn Time::from_nanos(Int64) -> Self
+pub fn Time::from_secs(Int64) -> Self
+pub fn Time::sub(Self, Self) -> Duration
+pub fn Time::sub_duration(Self, Duration) -> Self
+pub fn Time::to_millis(Self) -> Int64
+pub fn Time::to_millis_double(Self) -> Double
+pub fn Time::to_nanos(Self) -> Int64
+pub fn Time::to_secs(Self) -> Int64
+pub fn Time::to_secs_double(Self) -> Double
+pub fn Time::to_string(Self) -> String
+pub fn Time::zero() -> Self
+
+// Type aliases
+pub type EventId = Int
+
+// Traits
+
