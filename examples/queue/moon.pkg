@@ -1,0 +1,6 @@
+import {
+  "bins-c-language/moon_event_sim/core",
+  "bins-c-language/moon_event_sim/process",
+  "bins-c-language/moon_event_sim/sync",
+  "bins-c-language/moon_event_sim/metrics",
+}
