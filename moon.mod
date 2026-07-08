@@ -7,5 +7,5 @@ keywords = ["simulation", "deterministic", "concurrency", "testing", "actor", "d
 description = "A high-performance deterministic event-driven simulation and concurrency testing framework for MoonBit."
 
 options(
-  "preferred-target": "native",
+  "preferred-target": "wasm-gc",
 )

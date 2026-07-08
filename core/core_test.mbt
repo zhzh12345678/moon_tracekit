@@ -1,0 +1,36 @@
+///|
+test "time and duration arithmetic" {
+  let t0 = Time::zero()
+  let d1 = Duration::from_millis(500L)
+  let t1 = t0.add(d1)
+  inspect(t1.to_string(), content="500ms")
+  let d2 = Duration::from_secs(2L)
+  let t2 = t1.add(d2)
+  inspect(t2.to_string(), content="2.5s")
+  inspect(t2.sub(t1).to_string(), content="2s")
+}
+
+///|
+test "deterministic pcg32 sequence" {
+  let rng1 = PCG32::new(12345UL, 1UL)
+  let rng2 = PCG32::new(12345UL, 1UL)
+  let v1 = rng1.next_uint()
+  let v2 = rng2.next_uint()
+  inspect(v1 == v2, content="true")
+  let f1 = rng1.next_float()
+  let f2 = rng2.next_float()
+  inspect(f1 == f2, content="true")
+  let exp_val = rng1.next_exponential(10.0)
+  inspect(exp_val >= 0.0, content="true")
+}
+
+///|
+test "event ordering" {
+  let e1 = Event::new(1, Time::from_millis(100L), priority=1, () => ())
+  let e2 = Event::new(2, Time::from_millis(100L), priority=0, () => ())
+  let e3 = Event::new(3, Time::from_millis(50L), priority=0, () => ())
+  // e3 is earliest (50ms)
+  inspect(e3.compare(e1) < 0, content="true")
+  // e2 has higher priority (0 < 1) at same time (100ms)
+  inspect(e2.compare(e1) < 0, content="true")
+}
