@@ -1,0 +1,6 @@
+import {
+  "bins-c-language/moon_event_sim/process",
+}
+import {
+  "bins-c-language/moon_event_sim/core",
+} for "test"
