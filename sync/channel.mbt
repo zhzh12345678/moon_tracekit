@@ -62,11 +62,12 @@ pub fn[T] Channel::try_recv(self : Channel[T]) -> T? {
 /// 使用示例：
 /// if let Some(val) = chan.try_recv() { ... } else { return chan.wait_recv() }
 pub fn[T] Channel::wait_recv(self : Channel[T]) -> @process.StepResult {
-  @process.StepResult::WaitEvent(self.id)
+  WaitEvent(self.id)
 }
 
 ///|
 /// 协作式发送等待原语：如果通道满则等待
 pub fn[T] Channel::wait_send(self : Channel[T]) -> @process.StepResult {
-  @process.StepResult::WaitEvent(self.id + 1000000)
+  WaitEvent(self.id + 1000000)
 }
+

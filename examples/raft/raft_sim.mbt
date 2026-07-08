@@ -60,10 +60,11 @@ pub fn RaftNode::simulate_partition(
 ) -> Unit {
   injector.schedule_fault(
     @core.Duration::from_millis(10L),
-    @fault.PacketDropSpike(self.id, target, 1.0),
+    PacketDropSpike(self.id, target, 1.0),
     duration,
     self.net,
   )
+
 }
 
 ///|

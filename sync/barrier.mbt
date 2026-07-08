@@ -37,5 +37,6 @@ pub fn Barrier::arrive_and_wait(self : Barrier) -> Bool {
 ///|
 /// 协作式屏障等待原语
 pub fn Barrier::wait_barrier(self : Barrier) -> @process.StepResult {
-  @process.StepResult::WaitEvent(self.id)
+  WaitEvent(self.id)
 }
+

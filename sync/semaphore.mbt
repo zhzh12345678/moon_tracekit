@@ -47,5 +47,6 @@ pub fn Semaphore::release(self : Semaphore) -> Unit {
 ///|
 /// 协作式等待获取许可原语
 pub fn Semaphore::wait_acquire(self : Semaphore) -> @process.StepResult {
-  @process.StepResult::WaitEvent(self.id)
+  WaitEvent(self.id)
 }
+

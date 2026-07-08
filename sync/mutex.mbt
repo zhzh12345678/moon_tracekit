@@ -51,5 +51,6 @@ pub fn Mutex::unlock(self : Mutex, pid : @process.ProcessId) -> Bool {
 ///|
 /// 协作式等待锁原语
 pub fn Mutex::wait_lock(self : Mutex) -> @process.StepResult {
-  @process.StepResult::WaitEvent(self.id)
+  WaitEvent(self.id)
 }
+

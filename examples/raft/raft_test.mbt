@@ -39,16 +39,17 @@ test "raft leader election and fault tolerance simulation" {
   // 2. 在 1.5s 时通过故障注入器在链路 n1->n2 和 n1->n3 上注入 100% 丢包率（模拟 n1 被分区隔离）
   injector.schedule_fault(
     @core.Duration::from_millis(1500L),
-    @fault.PacketDropSpike("n1", "n2", 1.0),
+    PacketDropSpike("n1", "n2", 1.0),
     @core.Duration::from_millis(2000L),
     net,
   )
   injector.schedule_fault(
     @core.Duration::from_millis(1500L),
-    @fault.PacketDropSpike("n1", "n3", 1.0),
+    PacketDropSpike("n1", "n3", 1.0),
     @core.Duration::from_millis(2000L),
     net,
   )
+
 
   sim.run()
   inspect(leader_count_at_1s, content="1")
