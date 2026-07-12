@@ -1,11 +1,11 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "bins-c-language/moon_event_sim/examples/queue"
+package "zhzh12345678/moon_tracekit/examples/queue"
 
 import {
-  "bins-c-language/moon_event_sim/core",
-  "bins-c-language/moon_event_sim/metrics",
-  "bins-c-language/moon_event_sim/process",
-  "bins-c-language/moon_event_sim/sync",
+  "zhzh12345678/moon_tracekit/core",
+  "zhzh12345678/moon_tracekit/metrics",
+  "zhzh12345678/moon_tracekit/process",
+  "zhzh12345678/moon_tracekit/sync",
 }
 
 // Values

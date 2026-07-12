@@ -32,4 +32,3 @@ test "histogram percentiles and distribution" {
   let p95 = h.p95()
   inspect(p95 >= 95.0 && p95 <= 96.0, content="true")
 }
-

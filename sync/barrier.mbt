@@ -39,4 +39,3 @@ pub fn Barrier::arrive_and_wait(self : Barrier) -> Bool {
 pub fn Barrier::wait_barrier(self : Barrier) -> @process.StepResult {
   WaitEvent(self.id)
 }
-

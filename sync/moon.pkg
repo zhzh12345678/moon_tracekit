@@ -1,7 +1,7 @@
 import {
-  "bins-c-language/moon_event_sim/process",
+  "zhzh12345678/moon_tracekit/process",
 }
 
 import {
-  "bins-c-language/moon_event_sim/core",
+  "zhzh12345678/moon_tracekit/core",
 } for "test"

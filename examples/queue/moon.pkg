@@ -1,6 +1,6 @@
 import {
-  "bins-c-language/moon_event_sim/core",
-  "bins-c-language/moon_event_sim/process",
-  "bins-c-language/moon_event_sim/sync",
-  "bins-c-language/moon_event_sim/metrics",
+  "zhzh12345678/moon_tracekit/core",
+  "zhzh12345678/moon_tracekit/process",
+  "zhzh12345678/moon_tracekit/sync",
+  "zhzh12345678/moon_tracekit/metrics",
 }

@@ -1,8 +1,8 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "bins-c-language/moon_event_sim/testing"
+package "zhzh12345678/moon_tracekit/testing"
 
 import {
-  "bins-c-language/moon_event_sim/core",
+  "zhzh12345678/moon_tracekit/core",
 }
 
 // Values

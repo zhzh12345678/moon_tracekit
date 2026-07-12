@@ -1,11 +1,11 @@
 ///|
-/// MoonEventSim 交互式演示程序主入口
+/// MoonTraceKit interactive demo entry point
 fn main {
   println("==================================================")
-  println("   MoonEventSim: 确定性离散事件仿真框架演示   ")
+  println("   MoonTraceKit: deterministic tracing toolkit demo")
   println("==================================================\n")
 
-  println("[演示 1] M/M/1 排队论与利特尔法则仿真 (500 客户)...")
+  println("[Demo 1] M/M/1 queue and Little's Law simulation (500 customers)...")
   let sim1 = @core.Simulator::new(options={
     max_time: @core.Time::from_secs(100_000L),
     max_events: 10_000_000L,
@@ -17,7 +17,9 @@ fn main {
   println(qsim.get_report())
 
   println("--------------------------------------------------\n")
-  println("[演示 2] 3 节点 Raft 集群选主与混沌容错仿真...")
+  println(
+    "[Demo 2] 3-node Raft cluster leader election and split-brain simulation...",
+  )
   let sim2 = @core.Simulator::new(options={
     max_time: @core.Time::from_secs(5L),
     max_events: 10_000L,
@@ -39,7 +41,7 @@ fn main {
   r3.start(nodes)
   sim2.run()
   println(
-    "Raft 集群仿真完成！虚拟总运行耗时: \{sim2.now().to_string()}，执行总离散事件数: \{sim2.event_count()}",
+    "Raft simulation complete. Virtual time: \{sim2.now().to_string()}, total events: \{sim2.event_count()}",
   )
   println("==================================================")
 }

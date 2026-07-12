@@ -70,4 +70,3 @@ pub fn[T] Channel::wait_recv(self : Channel[T]) -> @process.StepResult {
 pub fn[T] Channel::wait_send(self : Channel[T]) -> @process.StepResult {
   WaitEvent(self.id + 1000000)
 }
-

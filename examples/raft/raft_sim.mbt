@@ -64,7 +64,6 @@ pub fn RaftNode::simulate_partition(
     duration,
     self.net,
   )
-
 }
 
 ///|

@@ -50,7 +50,6 @@ test "raft leader election and fault tolerance simulation" {
     net,
   )
 
-
   sim.run()
   inspect(leader_count_at_1s, content="1")
 }

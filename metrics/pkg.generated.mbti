@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "bins-c-language/moon_event_sim/metrics"
+package "zhzh12345678/moon_tracekit/metrics"
 
 // Values
 
@@ -36,6 +36,7 @@ pub fn Histogram::max(Self) -> Double
 pub fn Histogram::mean(Self) -> Double
 pub fn Histogram::min(Self) -> Double
 pub fn Histogram::new(String) -> Self
+pub fn Histogram::p95(Self) -> Double
 pub fn Histogram::percentile(Self, Double) -> Double
 pub fn Histogram::record(Self, Double) -> Unit
 

@@ -1,10 +1,10 @@
-name = "bins-c-language/moon_event_sim"
+name = "zhzh12345678/moon_tracekit"
 
 version = "0.1.0"
 
 readme = "README.mbt.md"
 
-repository = "https://github.com/bins-c-language/moon_event_sim"
+repository = "https://github.com/zhzh12345678/moon_tracekit"
 
 license = "Apache-2.0"
 
@@ -18,6 +18,6 @@ keywords = [
   "event-driven",
 ]
 
-description = "A high-performance deterministic event-driven simulation and concurrency testing framework for MoonBit."
+description = "A deterministic tracing and observability toolkit for MoonBit."
 
 preferred_target = "wasm-gc"

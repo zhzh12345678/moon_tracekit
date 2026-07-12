@@ -1,11 +1,11 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "bins-c-language/moon_event_sim/examples/raft"
+package "zhzh12345678/moon_tracekit/examples/raft"
 
 import {
-  "bins-c-language/moon_event_sim/core",
-  "bins-c-language/moon_event_sim/fault",
-  "bins-c-language/moon_event_sim/net",
   "moonbitlang/core/debug",
+  "zhzh12345678/moon_tracekit/core",
+  "zhzh12345678/moon_tracekit/fault",
+  "zhzh12345678/moon_tracekit/net",
 }
 
 // Values

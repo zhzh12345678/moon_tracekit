@@ -79,4 +79,3 @@ test "bench: virtual time priority queue throughput" {
 
   inspect(pq.length(), content="0")
 }
-

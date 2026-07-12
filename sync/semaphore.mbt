@@ -49,4 +49,3 @@ pub fn Semaphore::release(self : Semaphore) -> Unit {
 pub fn Semaphore::wait_acquire(self : Semaphore) -> @process.StepResult {
   WaitEvent(self.id)
 }
-

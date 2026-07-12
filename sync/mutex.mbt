@@ -53,4 +53,3 @@ pub fn Mutex::unlock(self : Mutex, pid : @process.ProcessId) -> Bool {
 pub fn Mutex::wait_lock(self : Mutex) -> @process.StepResult {
   WaitEvent(self.id)
 }
-

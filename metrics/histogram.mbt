@@ -91,4 +91,3 @@ pub fn Histogram::percentile(self : Histogram, p : Double) -> Double {
 pub fn Histogram::p95(self : Histogram) -> Double {
   self.percentile(0.95)
 }
-
