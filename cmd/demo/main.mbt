@@ -44,4 +44,46 @@ fn main {
     "Raft simulation complete. Virtual time: \{sim2.now().to_string()}, total events: \{sim2.event_count()}",
   )
   println("==================================================")
+
+  println(
+    "\n[Demo 3] Full-link Tracing (Span, Context, Waterfall, OTel JSONL)...",
+  )
+  let bg_ctx = @trace.Context::background()
+  let t_start = @core.Time::from_millis(100L)
+  let (root_span, ctx1) = @trace.Span::start_root(
+    "process_request", t_start, bg_ctx,
+  )
+  root_span.set_attribute("http.method", "GET")
+  root_span.set_attribute("http.url", "/api/v1/data")
+
+  let t_db = @core.Time::from_millis(110L)
+  let (db_span, _) = @trace.Span::start_child("db_query", t_db, ctx1)
+  db_span.set_attribute("db.system", "mysql")
+  db_span.add_event(
+    @trace.TelemetryEvent::new(
+      @core.Time::from_millis(115L),
+      @trace.LogLevel::Info,
+      "Executing SELECT * FROM users",
+    ),
+  )
+  db_span.end(@core.Time::from_millis(150L))
+
+  let t_cache = @core.Time::from_millis(150L)
+  let (cache_span, _) = @trace.Span::start_child("cache_update", t_cache, ctx1)
+  cache_span.end(@core.Time::from_millis(160L))
+
+  root_span.end(@core.Time::from_millis(165L))
+
+  let spans = [root_span, db_span, cache_span]
+  println(
+    @trace.print_waterfall(
+      spans,
+      @core.Time::from_millis(100L),
+      @core.Time::from_millis(170L),
+    ),
+  )
+
+  println("OTel JSONL Export for root span:")
+  println(@trace.export_span_jsonl(root_span))
+  println("==================================================")
 }
