@@ -1,6 +1,6 @@
 name = "zhzh12345678/moon_tracekit"
 
-version = "0.1.0"
+version = "0.1.1"
 
 readme = "README.mbt.md"
 
