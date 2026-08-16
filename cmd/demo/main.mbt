@@ -59,12 +59,11 @@ fn main {
   let t_db = @core.Time::from_millis(110L)
   let (db_span, _) = @trace.Span::start_child("db_query", t_db, ctx1)
   db_span.set_attribute("db.system", "mysql")
-  db_span.add_event(
-    @trace.TelemetryEvent::new(
-      @core.Time::from_millis(115L),
-      @trace.LogLevel::Info,
-      "Executing SELECT * FROM users",
-    ),
+  db_span.add_log(
+    @core.Time::from_millis(115L),
+    @trace.LogLevel::Info,
+    "Executing SELECT * FROM users",
+    attributes={ "db.system": "mysql" },
   )
   db_span.end(@core.Time::from_millis(150L))
 
@@ -83,7 +82,7 @@ fn main {
     ),
   )
 
-  println("OTel JSONL Export for root span:")
-  println(@trace.export_span_jsonl(root_span))
+  println("OTel JSONL Export for the complete trace:")
+  println(@trace.export_spans_jsonl(spans))
   println("==================================================")
 }

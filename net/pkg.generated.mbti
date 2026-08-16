@@ -51,4 +51,3 @@ pub fn[T] Packet::new(Int, String, String, T, @core.Time, size? : Int) -> Self[T
 // Type aliases
 
 // Traits
-

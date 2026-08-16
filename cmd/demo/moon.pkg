@@ -6,6 +6,4 @@ import {
   "zhzh12345678/moon_tracekit/trace",
 }
 
-options(
-  "is-main": true,
-)
+pkgtype(kind: "executable")

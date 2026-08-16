@@ -25,10 +25,30 @@ pub fn print_waterfall(
   })
 
   for span in spans {
-    let start_offset = span.start_time.to_nanos() - min_time.to_nanos()
-    let span_dur = match span.end_time {
-      Some(et) => et.to_nanos() - span.start_time.to_nanos()
-      None => max_time.to_nanos() - span.start_time.to_nanos()
+    let start_nanos = span.start_time.to_nanos()
+    let raw_end = match span.end_time {
+      Some(et) => et.to_nanos()
+      None => max_time.to_nanos()
+    }
+    let visible_start = if start_nanos < min_time.to_nanos() {
+      min_time.to_nanos()
+    } else if start_nanos > max_time.to_nanos() {
+      max_time.to_nanos()
+    } else {
+      start_nanos
+    }
+    let visible_end = if raw_end < min_time.to_nanos() {
+      min_time.to_nanos()
+    } else if raw_end > max_time.to_nanos() {
+      max_time.to_nanos()
+    } else {
+      raw_end
+    }
+    let start_offset = visible_start - min_time.to_nanos()
+    let span_dur = if visible_end > visible_start {
+      visible_end - visible_start
+    } else {
+      0L
     }
 
     let pre_spaces = (start_offset.to_double() / total_nanos.to_double() * width).to_int()

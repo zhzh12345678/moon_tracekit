@@ -26,4 +26,3 @@ pub fn ChaosRunner::run(Self, (UInt64) -> Bool) -> Bool
 // Type aliases
 
 // Traits
-

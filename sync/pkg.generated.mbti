@@ -63,4 +63,3 @@ pub fn Semaphore::wait_acquire(Self) -> @process.StepResult
 // Type aliases
 
 // Traits
-

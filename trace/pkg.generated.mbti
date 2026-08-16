@@ -1,0 +1,65 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "zhzh12345678/moon_tracekit/trace"
+
+import {
+  "moonbitlang/core/debug",
+  "zhzh12345678/moon_tracekit/core",
+}
+
+// Values
+pub fn export_span_jsonl(Span) -> String
+
+pub fn export_spans_jsonl(Array[Span]) -> String
+
+pub fn print_waterfall(Array[Span], @core.Time, @core.Time) -> String
+
+// Errors
+
+// Types and methods
+pub(all) struct Context {
+  values : Map[String, String]
+}
+pub fn Context::background() -> Self
+pub fn Context::value(Self, String) -> String?
+pub fn Context::with_span(Self, String, String) -> Self
+pub fn Context::with_value(Self, String, String) -> Self
+
+pub(all) enum LogLevel {
+  Debug
+  Info
+  Warn
+  Error
+} derive(Eq, @debug.Debug)
+pub fn LogLevel::to_string(Self) -> String
+
+pub(all) struct Span {
+  trace_id : String
+  span_id : String
+  parent_id : String?
+  name : String
+  start_time : @core.Time
+  mut end_time : @core.Time?
+  attributes : Map[String, String]
+  events : Array[TelemetryEvent]
+}
+pub fn Span::add_event(Self, TelemetryEvent) -> Unit
+pub fn Span::add_log(Self, @core.Time, LogLevel, String, attributes? : Map[String, String]) -> Unit
+pub fn Span::context(Self, Context) -> Context
+pub fn Span::end(Self, @core.Time) -> Unit
+pub fn Span::set_attribute(Self, String, String) -> Unit
+pub fn Span::start_child(String, @core.Time, Context) -> (Self, Context)
+pub fn Span::start_root(String, @core.Time, Context) -> (Self, Context)
+
+pub(all) struct TelemetryEvent {
+  time : @core.Time
+  level : LogLevel
+  message : String
+  attributes : Map[String, String]
+  trace_id : String?
+  span_id : String?
+}
+pub fn TelemetryEvent::new(@core.Time, LogLevel, String, attributes? : Map[String, String]) -> Self
+
+// Type aliases
+
+// Traits

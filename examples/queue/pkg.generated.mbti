@@ -30,4 +30,3 @@ pub fn QueueSim::start(Self, Int) -> Unit
 // Type aliases
 
 // Traits
-

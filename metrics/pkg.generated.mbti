@@ -39,6 +39,20 @@ pub fn Histogram::new(String) -> Self
 pub fn Histogram::p95(Self) -> Double
 pub fn Histogram::percentile(Self, Double) -> Double
 pub fn Histogram::record(Self, Double) -> Unit
+pub fn Histogram::snapshot(Self) -> HistogramSnapshot
+
+pub(all) struct HistogramSnapshot {
+  name : String
+  count : Int
+  min : Double
+  max : Double
+  mean : Double
+  p50 : Double
+  p95 : Double
+  p99 : Double
+}
+pub fn HistogramSnapshot::to_json(Self) -> String
+pub fn HistogramSnapshot::to_string(Self) -> String
 
 pub(all) struct MetricsRegistry {
   counters : Map[String, Counter]
@@ -54,4 +68,3 @@ pub fn MetricsRegistry::summary(Self) -> String
 // Type aliases
 
 // Traits
-

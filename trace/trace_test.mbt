@@ -32,6 +32,26 @@ test "context with value" {
 }
 
 ///|
+test "context propagates span identity without mutating its parent" {
+  let base = @trace.Context::background()
+  let (root, root_ctx) = @trace.Span::start_root(
+    "request",
+    @core.Time::from_millis(10L),
+    base,
+  )
+  let root_trace = root_ctx.value("trace_id")
+  let root_span = root_ctx.value("span_id")
+  let child_ctx = root.context(base)
+  if child_ctx.value("trace_id") != root_trace ||
+    child_ctx.value("span_id") != root_span {
+    fail("span context was not propagated")
+  }
+  if base.value("trace_id") != None || base.value("span_id") != None {
+    fail("parent context was mutated")
+  }
+}
+
+///|
 test "telemetry event creation" {
   let t = @core.Time::from_millis(100L)
   let ev = @trace.TelemetryEvent::new(t, @trace.LogLevel::Info, "test msg")
@@ -110,12 +130,11 @@ test "span end and attributes" {
   let (span, _) = @trace.Span::start_root("root", t1, bg)
 
   span.set_attribute("http.status", "200")
-  span.add_event(
-    @trace.TelemetryEvent::new(
-      @core.Time::from_millis(105L),
-      @trace.LogLevel::Info,
-      "request processed",
-    ),
+  span.add_log(
+    @core.Time::from_millis(105L),
+    @trace.LogLevel::Info,
+    "request processed",
+    attributes={ "component": "http" },
   )
 
   let t2 = @core.Time::from_millis(120L)
@@ -126,6 +145,13 @@ test "span end and attributes" {
   }
   if span.events.length() != 1 {
     fail("assert error")
+  }
+  if span.events[0].trace_id != Some(span.trace_id) ||
+    span.events[0].span_id != Some(span.span_id) {
+    fail("event was not associated with span")
+  }
+  if span.events[0].attributes.get("component") != Some("http") {
+    fail("event attributes were lost")
   }
 }
 
@@ -164,5 +190,105 @@ test "otel jsonl export" {
   let out = @trace.export_span_jsonl(root)
   if out.length() == 0 {
     fail("json empty")
+  }
+}
+
+///|
+test "otel export includes event correlation and level" {
+  let bg = @trace.Context::background()
+  let (span, _) = @trace.Span::start_root("worker", @core.Time::zero(), bg)
+  span.add_log(
+    @core.Time::from_millis(2L),
+    @trace.LogLevel::Error,
+    "database timeout",
+    attributes={ "retry": "true" },
+  )
+  let out = @trace.export_span_jsonl(span)
+  if out.contains("\"level\":\"ERROR\"") == false {
+    fail("event level was not exported")
+  }
+  if out.contains("\"traceId\":\"" + span.trace_id) == false ||
+    out.contains("\"spanId\":\"" + span.span_id) == false {
+    fail("event correlation was not exported")
+  }
+  if out.contains("\"retry\":\"true\"") == false {
+    fail("event attributes were not exported")
+  }
+}
+
+///|
+test "otel export escapes business strings" {
+  let bg = @trace.Context::background()
+  let (span, _) = @trace.Span::start_root(
+    "read \"config\"",
+    @core.Time::zero(),
+    bg,
+  )
+  span.set_attribute("path", "C:\\tmp\\a\nnext")
+  span.add_event(
+    @trace.TelemetryEvent::new(
+      @core.Time::from_millis(1L),
+      @trace.LogLevel::Warn,
+      "line 1\nline 2",
+    ),
+  )
+  let out = @trace.export_span_jsonl(span)
+  if out.contains("read \\\"config\\\"") == false {
+    fail("span name was not escaped")
+  }
+  if out.contains("\\n") == false || out.contains("\\\\tmp") == false {
+    fail("control characters were not escaped")
+  }
+}
+
+///|
+test "batch export preserves order and empty input" {
+  let bg = @trace.Context::background()
+  let (first, _) = @trace.Span::start_root("first", @core.Time::zero(), bg)
+  let (second, _) = @trace.Span::start_root("second", @core.Time::zero(), bg)
+  let empty = @trace.export_spans_jsonl([])
+  if empty != "" {
+    fail("empty batch should be empty")
+  }
+  let out = @trace.export_spans_jsonl([first, second])
+  if out.split("\n").length() != 2 {
+    fail("batch must contain one line per span")
+  }
+  if out.contains("first") == false || out.contains("second") == false {
+    fail("batch lost a span")
+  }
+}
+
+///|
+test "waterfall clips spans outside the requested window" {
+  let bg = @trace.Context::background()
+  let (span, _) = @trace.Span::start_root(
+    "long_operation",
+    @core.Time::from_millis(0L),
+    bg,
+  )
+  span.end(@core.Time::from_millis(200L))
+  let out = @trace.print_waterfall(
+    [span],
+    @core.Time::from_millis(50L),
+    @core.Time::from_millis(100L),
+  )
+  if out.contains("250ms") {
+    fail("waterfall used unclipped duration")
+  }
+  if out.contains("50000000ns") == false {
+    fail("waterfall did not show visible duration")
+  }
+}
+
+///|
+test "waterfall rejects an empty time window" {
+  let out = @trace.print_waterfall(
+    [],
+    @core.Time::from_millis(5L),
+    @core.Time::from_millis(5L),
+  )
+  if out.contains("Invalid time range") == false {
+    fail("invalid range was not reported")
   }
 }

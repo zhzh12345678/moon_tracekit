@@ -19,6 +19,11 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Setup Node.js for JavaScript tests
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Install MoonBit on Unix
         if: ${{ matrix.os != 'windows-latest' }}
         shell: bash
@@ -43,14 +48,14 @@ jobs:
       - name: moon check --target all
         run: moon check --target all --deny-warn
 
-      - name: moon fmt --deny-warn
-        run: moon fmt --deny-warn
+      - name: moon fmt --check
+        run: moon fmt --check
 
       - name: moon check --fmt --deny-warn
         run: moon check --fmt --deny-warn
 
-      - name: moon info --deny-warn
-        run: moon info --target all --deny-warn
+      - name: moon info
+        run: moon info --target all
 
       - name: Ensure generated interfaces stay clean
         run: git diff --exit-code

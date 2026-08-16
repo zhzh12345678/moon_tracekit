@@ -117,4 +117,3 @@ pub fn Time::zero() -> Self
 pub type EventId = Int
 
 // Traits
-

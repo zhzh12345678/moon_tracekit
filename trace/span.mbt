@@ -30,9 +30,7 @@ pub fn Span::start_root(
     attributes: {},
     events: [],
   }
-  let new_ctx = ctx
-    .with_value("trace_id", trace_id)
-    .with_value("span_id", span_id)
+  let new_ctx = ctx.with_span(trace_id, span_id)
   (span, new_ctx)
 }
 
@@ -62,7 +60,7 @@ pub fn Span::start_child(
         attributes: {},
         events: [],
       }
-      let new_ctx = ctx.with_value("span_id", span_id)
+      let new_ctx = ctx.with_span(tid, span_id)
       (span, new_ctx)
     }
     None => Span::start_root(name, start_time, ctx)
@@ -84,5 +82,23 @@ pub fn Span::set_attribute(self : Span, key : String, value : String) -> Unit {
 ///|
 /// 为Span记录事件（Span与日志关联）
 pub fn Span::add_event(self : Span, event : TelemetryEvent) -> Unit {
-  self.events.push(event)
+  self.events.push(event.attach(self.trace_id, self.span_id))
+}
+
+///|
+/// 记录一个与当前 Span 自动关联的日志事件。
+pub fn Span::add_log(
+  self : Span,
+  time : @core.Time,
+  level : LogLevel,
+  message : String,
+  attributes? : Map[String, String] = {},
+) -> Unit {
+  self.add_event(TelemetryEvent::new(time, level, message, attributes~))
+}
+
+///|
+/// 从当前 Span 派生异步上下文快照。
+pub fn Span::context(self : Span, base : Context) -> Context {
+  base.with_span(self.trace_id, self.span_id)
 }

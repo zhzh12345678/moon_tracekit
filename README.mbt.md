@@ -1,122 +1,71 @@
 # MoonTraceKit
 
-[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![MoonBit 0.10.3](https://img.shields.io/badge/MoonBit-0.10.3-purple.svg)](https://www.moonbitlang.com)
-[![OSC 2026](https://img.shields.io/badge/OSC_2026-Track_1-orange.svg)](https://www.gitlink.org.cn/competitions/track1_2026MoonBit)
+MoonTraceKit 是一个 MoonBit 原生的确定性仿真与可观测性工具包，面向事件驱动服务、分布式协议和并发组件的回归测试。它把虚拟时间、调度、网络故障、指标和 tracing 放在同一个可复现的测试模型中。
 
-MoonTraceKit is a MoonBit-native deterministic tracing and observability toolkit for event-driven systems. It focuses on three things:
+## 能解决什么问题
 
-- deterministic virtual time and reproducible simulations
-- structured tracing, logging, and metrics for concurrent workflows
-- a test-friendly runtime that makes race conditions and timing bugs easier to reproduce
+- 用虚拟纳秒时钟复现超时、重试、排队和竞态，不依赖真实机器时间。
+- 用优先队列、Actor 风格进程和同步原语构建可控的并发场景。
+- 模拟链路延迟、带宽、丢包、节点宕机和网络分区，验证故障恢复路径。
+- 收集 Counter、Gauge、Histogram 和 Span，并输出延迟分位数、ASCII waterfall 和 OTel 风格 JSONL。
 
-The repository is organized as a single-owner OSC 2026 project and is intended to satisfy the final acceptance checklist:
+项目不是生产网络栈或完整 Raft 实现；`examples/` 用于展示如何把组件组合到可运行的实验中，生产系统应自行接入真实 IO、持久化和安全策略。
 
-- public repository
-- Apache-2.0 license
-- clear README and architecture notes
-- runnable tests and CI
-- a single contributor: `zhzh12345678`
+## 仓库与许可证
 
-## Repository
+- GitHub：<https://github.com/zhzh12345678/moon_tracekit>
+- GitLink：<https://gitlink.org.cn/zhzh12345678/moon_tracekit>
+- 许可证：Apache License 2.0，完整文本见 [LICENSE](LICENSE)。
 
-- GitHub: [zhzh12345678/moon_tracekit](https://github.com/zhzh12345678/moon_tracekit)
-- GitLink: [zhzh12345678/moon_tracekit](https://gitlink.org.cn/zhzh12345678/moon_tracekit)
+项目为原创 MoonBit 实现，不复制第三方源代码；当前没有外部运行时依赖。若后续加入依赖、生成代码或测试数据，应在本文件或 `docs/` 中记录来源、版本、许可证和再分发范围。
 
-## Layout
+## 目录
 
-- `core/`: virtual time engine, scheduling primitives, and deterministic simulation helpers
-- `process/`: lightweight actor-style process management
-- `sync/`: deterministic channels, mutexes, semaphores, and barriers
-- `net/` and `fault/`: network topology, packet routing, and fault injection
-- `metrics/`: counters, gauges, histograms, and percentile reporting
-- `testing/`: assertions and chaos-oriented test helpers
-- `examples/`: queueing and distributed-systems simulations
-- `cmd/demo/`: interactive demo entry point
-- `docs/ARCHITECTURE.md`: architecture notes and module overview
+- `core/`：虚拟时间、事件、确定性 PCG32 随机数和最小堆优先队列。
+- `process/`：轻量 Actor 风格进程调度。
+- `sync/`：Channel、Mutex、Semaphore、Barrier。
+- `net/`、`fault/`：链路、拓扑、带宽/延迟/丢包和故障注入。
+- `metrics/`、`trace/`：指标、Span、Context、waterfall、JSONL 导出。
+- `testing/`：断言和确定性 chaos runner。
+- `examples/`：M/M/1 排队与三节点选举实验。
+- `cmd/demo/`：可直接运行的综合演示。
+- `docs/`：架构、验收自检和边界说明。
 
-## Build And Test
+## 安装与运行
 
-The project targets MoonBit `0.10.3`.
-
-### 安装环境
-
-请按照[MoonBit官方指南](https://www.moonbitlang.cn/download/)安装最新的 `0.10.3` 工具链。
+项目兼容 MoonBit 0.10.3 及更新版本；本地验收使用 MoonBit 0.10.7。安装后在仓库根目录执行：
 
 ```bash
-# 验证安装版本
 moon version --all
-# 更新依赖
 moon update
-```
-
-### 启动命令
-
-运行本地交互式追踪演示：
-
-```bash
+moon check --target all --deny-warn
+moon fmt --check
+moon test --target all
 moon run cmd/demo
 ```
 
-将输出包含队列模拟、Raft 选举，以及我们提供的 **全链路追踪 SDK 瀑布流和 OTel JSONL 演示**。
+`cmd/demo` 会运行 500 个客户的 M/M/1 排队实验、三节点选举实验和 tracing/OTel 导出示例。所有测试不依赖网络服务和真实时钟，因此同一工具链下结果应可重复。
 
-### API 示例
-
-这是一个如何在你的 MoonBit 业务代码中加入追踪、记录日志，并导出瀑布流的示例：
+## 最小使用样例
 
 ```moonbit
-let bg_ctx = @trace.Context::background()
-let t_start = @core.Time::from_millis(100L)
+let sim = @core.Simulator::new()
+let _ = sim.schedule(@core.Duration::from_millis(10L), () => println("ready"))
+sim.run()
 
-// 1. 创建 Root Span
-let (root_span, ctx) = @trace.Span::start_root("process_request", t_start, bg_ctx)
-root_span.set_attribute("http.method", "GET")
-
-// 2. 异步上下文传播，创建子 Span
-let t_db = @core.Time::from_millis(110L)
-let (db_span, _) = @trace.Span::start_child("db_query", t_db, ctx)
-
-// 3. 关联遥测日志
-db_span.add_event(@trace.TelemetryEvent::new(
-  @core.Time::from_millis(115L),
-  @trace.LogLevel::Info,
-  "Executing DB query",
-))
-
-// 4. 结束 Spans
-db_span.end(@core.Time::from_millis(150L))
-root_span.end(@core.Time::from_millis(165L))
-
-// 5. 打印瀑布流及导出 OTel JSONL
-println(@trace.print_waterfall([root_span, db_span], t_start, @core.Time::from_millis(170L)))
-println(@trace.export_span_jsonl(root_span))
+let ctx = @trace.Context::background()
+let (span, _) = @trace.Span::start_root("request", sim.now(), ctx)
+span.set_attribute("http.method", "GET")
+let child_ctx = span.context(ctx)
+let (db_span, _) = @trace.Span::start_child("database", sim.now(), child_ctx)
+db_span.add_log(sim.now(), @trace.LogLevel::Info, "query started")
+db_span.end(sim.now().add(@core.Duration::from_millis(1L)))
+span.end(sim.now().add(@core.Duration::from_millis(2L)))
+println(@trace.export_spans_jsonl([span, db_span]))
 ```
 
-## CI
+## 工程质量与验收证据
 
-The repository ships a GitHub Actions workflow in [`.github/workflows/ci.yml`](.github/workflows/ci.yml) that runs:
+CI 位于 `.github/workflows/ci.yml`，覆盖 Linux、macOS、Windows，并显式安装 Node.js 后执行 `moon check`、格式检查、`moon info`、生成接口差异检查和测试。核心边界测试位于各包的 `*_test.mbt`；可复现实验与已知边界见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) 和 [docs/ACCEPTANCE.md](docs/ACCEPTANCE.md)。
 
-- `moon check --target all --deny-warn`
-- `moon fmt --deny-warn`
-- `moon check --fmt --deny-warn`
-- `moon info --target all --deny-warn`
-- `moon test --target all`
-
-The workflow installs the latest MoonBit toolchain, refreshes dependencies with `moon update`, and validates the project on Linux, macOS, and Windows.
-
-## Source Scale
-
-This repository contains over **4,000 lines of effective MoonBit source code** (`.mbt` and `.mbti`), specifically focusing on the virtual time engine, synchronization primitives, simulation actors, and the **full-link tracing SDK**. This explicitly avoids counting generated binary files or external `.moon` target caches, ensuring compliance with the contest requirement of 4~10k effective lines.
-
-## Acceptance Checklist
-
-- one contributor only: `zhzh12345678 <863146696@qq.com>`
-- default branch: `main`
-- license: Apache-2.0
-- tests: deterministic unit and integration coverage across all core packages
-- CI: present and aligned with the contest guidance
-- repository metadata: `moon.mod` points to the correct GitHub repository
-
-## Architecture Notes
-
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the module breakdown and design rationale.
+本地源码规模会随提交变化，请用 `rg --files -g '*.mbt'` 配合行数统计核验，不在文档中虚构固定覆盖率或行数。最终验收还要求 GitHub/GitLink 公开同步以及发布到 mooncakes.io，这两项必须以远程页面和发布查询结果为准。
