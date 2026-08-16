@@ -27,7 +27,7 @@ MoonTraceKit 是一个 MoonBit 原生的确定性仿真与可观测性工具包�
 - `net/`、`fault/`：链路、拓扑、带宽/延迟/丢包和故障注入。
 - `metrics/`、`trace/`：指标、Span、Context、waterfall、JSONL 导出。
 - `testing/`：断言和确定性 chaos runner。
-- `examples/`：M/M/1 排队与三节点选举实验。
+- `examples/`：M/M/1 排队、三节点选举和端到端请求流水线实验。
 - `cmd/demo/`：可直接运行的综合演示。
 - `docs/`：架构、验收自检和边界说明。
 
@@ -45,6 +45,8 @@ moon run cmd/demo
 ```
 
 `cmd/demo` 会运行 500 个客户的 M/M/1 排队实验、三节点选举实验和 tracing/OTel 导出示例。所有测试不依赖网络服务和真实时钟，因此同一工具链下结果应可重复。
+
+端到端流水线位于 `examples/pipeline/`：8 个请求经过缓存或数据库路径，其中两次确定性数据库超时；报告同时包含成功/超时计数、延迟分位数、错误事件数、完整 Span JSONL 和 trace 质量分析。可通过 `moon test examples/pipeline --target all` 单独复现。
 
 ## 最小使用样例
 

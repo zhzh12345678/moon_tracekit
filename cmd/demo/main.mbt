@@ -85,4 +85,17 @@ fn main {
   println("OTel JSONL Export for the complete trace:")
   println(@trace.export_spans_jsonl(spans))
   println("==================================================")
+
+  println(
+    "\n[Demo 4] End-to-end request pipeline with cache, database timeout, metrics and trace analysis...",
+  )
+  let pipeline_sim = @core.Simulator::new(options={
+    max_time: @core.Time::from_secs(10L),
+    max_events: 10_000L,
+    seed: 20260817UL,
+  })
+  let pipeline = @pipeline.PipelineScenario::new(pipeline_sim).run(8)
+  println(pipeline.to_string())
+  println("Pipeline healthy: \{pipeline.is_healthy()}")
+  println("==================================================")
 }

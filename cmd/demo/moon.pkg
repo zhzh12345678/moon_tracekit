@@ -3,6 +3,7 @@ import {
   "zhzh12345678/moon_tracekit/net",
   "zhzh12345678/moon_tracekit/examples/queue",
   "zhzh12345678/moon_tracekit/examples/raft",
+  "zhzh12345678/moon_tracekit/examples/pipeline",
   "zhzh12345678/moon_tracekit/trace",
 }
 

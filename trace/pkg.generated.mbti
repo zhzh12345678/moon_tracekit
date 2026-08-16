@@ -7,11 +7,21 @@ import {
 }
 
 // Values
+pub fn analyze_single_trace(Span, Array[Span]) -> TraceAnalysis
+
+pub fn analyze_trace(Array[Span]) -> TraceAnalysis
+
 pub fn export_span_jsonl(Span) -> String
 
 pub fn export_spans_jsonl(Array[Span]) -> String
 
+pub fn longest_span(Array[Span]) -> Span?
+
 pub fn print_waterfall(Array[Span], @core.Time, @core.Time) -> String
+
+pub fn select_spans_with_level(Array[Span], LogLevel) -> Array[Span]
+
+pub fn select_trace(Array[Span], String) -> Array[Span]
 
 // Errors
 
@@ -59,6 +69,41 @@ pub(all) struct TelemetryEvent {
   span_id : String?
 }
 pub fn TelemetryEvent::new(@core.Time, LogLevel, String, attributes? : Map[String, String]) -> Self
+
+pub(all) struct TraceAnalysis {
+  summary : TraceSummary
+  issues : Array[TraceIssue]
+}
+pub fn TraceAnalysis::is_valid(Self) -> Bool
+pub fn TraceAnalysis::issue_count(Self) -> Int
+pub fn TraceAnalysis::issues(Self) -> ArrayView[TraceIssue]
+pub fn TraceAnalysis::summary(Self) -> TraceSummary
+pub fn TraceAnalysis::to_report(Self) -> String
+
+pub(all) enum TraceIssue {
+  DuplicateSpanId(String)
+  MissingParent(String)
+  CrossTraceParent(String)
+  InvalidSpanTime(String)
+  EventOutsideSpan(String)
+  UnboundEvent(String)
+  EmptySpanName(String)
+} derive(Eq, @debug.Debug)
+pub fn TraceIssue::to_string(Self) -> String
+
+pub(all) struct TraceSummary {
+  trace_count : Int
+  span_count : Int
+  root_count : Int
+  event_count : Int
+  error_event_count : Int
+  open_span_count : Int
+  earliest_start : @core.Time?
+  latest_end : @core.Time?
+  duration : @core.Duration
+}
+pub fn TraceSummary::to_json(Self) -> String
+pub fn TraceSummary::to_string(Self) -> String
 
 // Type aliases
 

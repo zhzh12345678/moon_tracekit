@@ -21,6 +21,7 @@ moon run cmd/demo
 - MoonBit 主实现：仓库源文件以 `.mbt` 为主，模块名在 `moon.mod` 中声明。
 - 可复现使用：README 提供安装、检查、测试、运行和最小 API 示例。
 - 核心路径：`core`、`sync`、`net`、`fault`、`metrics`、`trace` 均有测试。
+- 真实场景：`examples/pipeline` 覆盖缓存命中、数据库访问、超时错误、延迟统计、统一事件关联和完整 trace 质量分析。
 - CI：`.github/workflows/ci.yml` 覆盖检查、格式、接口生成差异和多平台测试。
 - 开源合规：根目录 `LICENSE` 为 Apache-2.0；本项目声明不复制第三方代码。
 - 远程门槛：GitHub/GitLink 的公开同步、最新 CI 运行记录和 mooncakes.io 发布必须在授权后另行核验。

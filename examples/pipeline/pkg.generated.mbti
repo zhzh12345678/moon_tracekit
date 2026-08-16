@@ -1,0 +1,44 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "zhzh12345678/moon_tracekit/examples/pipeline"
+
+import {
+  "zhzh12345678/moon_tracekit/core",
+  "zhzh12345678/moon_tracekit/metrics",
+  "zhzh12345678/moon_tracekit/trace",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct PipelineReport {
+  requests : Int
+  successes : Int
+  timeouts : Int
+  cache_hits : Int
+  database_calls : Int
+  latency : @metrics.HistogramSnapshot
+  trace_analysis : @trace.TraceAnalysis
+  spans : Array[@trace.Span]
+}
+pub fn PipelineReport::is_healthy(Self) -> Bool
+pub fn PipelineReport::to_jsonl(Self) -> String
+pub fn PipelineReport::to_string(Self) -> String
+
+pub(all) struct PipelineScenario {
+  sim : @core.Simulator
+  latency : @metrics.Histogram
+  mut requests : Int
+  mut successes : Int
+  mut timeouts : Int
+  mut cache_hits : Int
+  mut database_calls : Int
+  spans : Array[@trace.Span]
+}
+pub fn PipelineScenario::new(@core.Simulator) -> Self
+pub fn PipelineScenario::run(Self, Int) -> PipelineReport
+
+// Type aliases
+
+// Traits
